@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{1ecb93c2-c277-401c-8f7d-2cecedad7e80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Windowing">
+      <UniqueIdentifier>{847b645a-9690-4add-b309-1c096b222095}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering">
+      <UniqueIdentifier>{83324e1e-5b0b-4855-a0ad-f606da1e3017}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering\Rendering Engine">
+      <UniqueIdentifier>{522f47d3-0563-4b45-bc38-6ac7a41e28b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering\Renderable Types">
+      <UniqueIdentifier>{7c5bb250-44b6-4b20-ae15-aeb7f00a5a1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering\Renderable Types\Shaders">
+      <UniqueIdentifier>{19c009e9-fe20-4afe-9183-92d640cfccc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering\Renderable Types\Skybox">
+      <UniqueIdentifier>{f9fc8ae9-b13e-4a86-bd6f-dbf978f37242}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering\Renderable Types\Images">
+      <UniqueIdentifier>{aaee788f-38f5-4e4d-a035-59c278d807f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering\Renderable Types\Images\Texture Lib">
+      <UniqueIdentifier>{c1e6e464-7290-4279-ae76-2aa846abc4bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering\Renderable Types\3D Models">
+      <UniqueIdentifier>{144c17b2-4283-4237-b30d-2555aadca0ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering\Renderable Types\3D Models\Mesh">
+      <UniqueIdentifier>{fd268f83-5545-4efa-9db8-756437669d03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Game">
+      <UniqueIdentifier>{dcca168f-dcb5-4b07-b8d2-47dda6bca99a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Game\Time">
+      <UniqueIdentifier>{00747d13-a34c-495f-9e44-1db07afeb474}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Content">
+      <UniqueIdentifier>{8722998e-6f7d-4f19-b923-407c8cf3bf37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Content\Factories">
+      <UniqueIdentifier>{030ec387-3042-48d5-909f-f7607706c498}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Input">
+      <UniqueIdentifier>{a74905b4-fab0-4dd2-8846-c7a649c40e14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering\Camera">
+      <UniqueIdentifier>{c7202f1b-c231-4304-a8ff-537ae641c8f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering\Renderable Types\Lights">
+      <UniqueIdentifier>{ed5343bf-70ab-45c6-ae54-ab0f2f0ec6c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering\Renderable Types\Materials">
+      <UniqueIdentifier>{ad419e37-8929-438e-ac95-01d62cc873e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VRDemoGame">
+      <UniqueIdentifier>{a8c731f3-d27a-48a4-acb2-6265a00a27ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\VR">
+      <UniqueIdentifier>{816688a1-3873-4e3b-8bf5-d8c730c253f4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Game.cpp">
+      <Filter>Engine\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Engine\Windowing</Filter>
+    </ClCompile>
+    <ClCompile Include="Skybox.cpp">
+      <Filter>Engine\Rendering\Renderable Types\Skybox</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Engine\Rendering\Renderable Types\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Engine\Rendering\Renderable Types\3D Models</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="RenderingEngine.cpp">
+      <Filter>Engine\Rendering\Rendering Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="MouseState.cpp">
+      <Filter>Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyboardState.cpp">
+      <Filter>Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Keyboard.cpp">
+      <Filter>Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTimer.cpp">
+      <Filter>Engine\Game\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Engine\Rendering\Renderable Types\3D Models\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="VRDemoGame.cpp">
+      <Filter>VRDemoGame</Filter>
+    </ClCompile>
+    <ClCompile Include="VRSystem.cpp">
+      <Filter>Engine\VR</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stb_image.h">
+      <Filter>Engine\Rendering\Renderable Types\Images\Texture Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image_resize.h">
+      <Filter>Engine\Rendering\Renderable Types\Images\Texture Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image_write.h">
+      <Filter>Engine\Rendering\Renderable Types\Images\Texture Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyboxFactory.h">
+      <Filter>Engine\Content\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderFactory.h">
+      <Filter>Engine\Content\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelFactory.h">
+      <Filter>Engine\Content\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="Content.h">
+      <Filter>Engine\Content</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Engine\Rendering\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Engine\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="IWindow.h">
+      <Filter>Engine\Windowing</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Engine\Windowing</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderable.h">
+      <Filter>Engine\Rendering\Renderable Types</Filter>
+    </ClInclude>
+    <ClInclude Include="ISkybox.h">
+      <Filter>Engine\Rendering\Renderable Types\Skybox</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.h">
+      <Filter>Engine\Rendering\Renderable Types\Skybox</Filter>
+    </ClInclude>
+    <ClInclude Include="IShader.h">
+      <Filter>Engine\Rendering\Renderable Types\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Engine\Rendering\Renderable Types\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Engine\Rendering\Renderable Types\3D Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Engine\Rendering\Renderable Types\3D Models\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderingEngine.h">
+      <Filter>Engine\Rendering\Rendering Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderingEngine.h">
+      <Filter>Engine\Rendering\Rendering Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="IMesh.h">
+      <Filter>Engine\Rendering\Renderable Types\3D Models\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseState.h">
+      <Filter>Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse.h">
+      <Filter>Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyboardState.h">
+      <Filter>Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Keyboard.h">
+      <Filter>Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTimer.h">
+      <Filter>Engine\Game\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Engine\Rendering\Renderable Types\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Engine\Rendering\Renderable Types\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Signal.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="VRDemoGame.h">
+      <Filter>VRDemoGame</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureBuffer.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="VRSystem.h">
+      <Filter>Engine\VR</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,36 @@
+#ifndef MESH_H
+#define MESH_H
+
+#include <GL/glew.h>
+#include "IRenderingEngine.h"
+#include "IMesh.h"
+
+namespace Engine
+{
+    namespace Rendering
+    {
+        /**
+         * \brief A 3D mesh. Contains all
+         */
+        class Mesh : public IMesh
+        {
+        public:
+            Mesh(const std::vector<Vertex>& vertices,
+                const std::vector<GLuint>& indices,
+                const std::vector<Texture>& textures,
+                const Material& material);
+
+            const std::vector<Texture>& GetTextures() const override;
+            const std::vector<GLuint>& GetIndices() const override;
+            const Material& GetMaterial() const override;
+            void Draw(const IRenderingEngine& rendering_engine) override;
+        private:
+            GLuint vao, vbo, ebo;
+            std::vector<Vertex> vertices;
+            std::vector<GLuint> indices;
+            std::vector<Texture> textures;
+            Material material;
+        };
+    }
+}
+#endif // MESH_H
