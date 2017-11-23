@@ -6,7 +6,7 @@ class Transform3D
 {
 public:
 	Transform3D(glm::vec3 pos = glm::vec3(0),
-		glm::vec3 scale = glm::vec3(0),
+		glm::vec3 scale = glm::vec3(1.0f),
 		glm::vec3 rotation = glm::vec3(0))
 		: m_position(pos),
 		m_scale(scale),

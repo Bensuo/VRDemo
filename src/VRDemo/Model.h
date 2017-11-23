@@ -3,6 +3,7 @@
 #include <vector>
 #include "Mesh.h"
 #include "IRenderable.h"
+#include "Transform3D.hpp"
 
 namespace Engine
 {
@@ -11,6 +12,7 @@ namespace Engine
         class Model : public IRenderable
         {
             std::vector<Mesh> meshes;
+			Transform3D transform;
         public:
             Model()
             {}
@@ -19,6 +21,10 @@ namespace Engine
                 this->meshes = meshes;
             }
             void Draw(IRenderingEngine& rendering_engine) override;
+			Transform3D& GetTransform()
+			{
+				return transform;
+			}
         };
     }
 }

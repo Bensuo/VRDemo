@@ -215,5 +215,6 @@ VRDemoGame::VRDemoGame()
     show_normal_mapping(true)
 {
     SetUpLighting();
+	dining_room.GetTransform().SetScale(glm::vec3(0.015f));
 	
 }
