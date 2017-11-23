@@ -18,7 +18,7 @@ namespace Engine
             {
                 this->meshes = meshes;
             }
-            void Draw(const IRenderingEngine& rendering_engine) override;
+            void Draw(IRenderingEngine& rendering_engine) override;
         };
     }
 }

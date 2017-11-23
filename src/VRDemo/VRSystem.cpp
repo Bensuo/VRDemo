@@ -144,12 +144,13 @@ glm::mat4 VRSystem::GetProjectionMatrix(int eye)
 	return glm::transpose(glm::make_mat4(&proj.M[0][0]));
 }
 
-glm::mat4 VRSystem::GetViewFromEye(glm::vec3 eyePos, int eye)
+glm::mat4 VRSystem::GetViewFromEye(glm::vec3 eyePos, int eye, glm::vec3& front, float rotationY)
 {
-	OVR::Matrix4f rollPitchYaw = OVR::Matrix4f::RotationY(0.0f);
+	OVR::Matrix4f rollPitchYaw = OVR::Matrix4f::RotationY(rotationY);
 	OVR::Matrix4f finalRollPitchYaw = rollPitchYaw * OVR::Matrix4f(layer.RenderPose[eye].Orientation);
 	OVR::Vector3f finalUp = finalRollPitchYaw.Transform(OVR::Vector3f(0, 1, 0));
 	OVR::Vector3f finalForward = finalRollPitchYaw.Transform(OVR::Vector3f(0, 0, -1));
+	front = glm::vec3(finalForward.x, finalForward.y, finalForward.z);
 	OVR::Vector3f shiftedEyePos = OVR::Vector3f(eyePos.x, eyePos.y, eyePos.z) + rollPitchYaw.Transform(layer.RenderPose[eye].Position);
 
 	OVR::Matrix4f view = OVR::Matrix4f::LookAtRH(shiftedEyePos, shiftedEyePos + finalForward, finalUp);

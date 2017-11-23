@@ -196,7 +196,7 @@ void VRDemoGame::SetUpLighting()
 
 VRDemoGame::VRDemoGame()
     : camera(glm::perspective(1.0f, 1280.0f / 720.0f, 0.1f, 100.0f),
-        glm::vec3(-0.6, 5, 5),
+        glm::vec3(-0.6, 0, 5),
         glm::vec3(0.0, 1.0, 0.0),
         -90.0f,
         -23.33f),

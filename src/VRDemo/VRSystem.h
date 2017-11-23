@@ -14,7 +14,7 @@ public:
 	void ClearEyeBuffer(int eye);
 	void CommitBuffer(int eye);
 	void RenderMirror(int w, int h);
-	glm::mat4 GetViewFromEye(glm::vec3 eyePos, int eye);
+	glm::mat4 GetViewFromEye(glm::vec3 eyePos, int eye, glm::vec3& front, float rotationY = 0.0f);
 	glm::mat4 GetProjectionMatrix(int eye);
 private:
 	ovrSession session;

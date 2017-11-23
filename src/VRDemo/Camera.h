@@ -79,9 +79,9 @@ namespace Engine
                 return lookAt(position, position + front, up);
             }
 
-			glm::mat4 GetViewVR(VRSystem& vr_system, int eye) const
+			glm::mat4 GetViewVR(VRSystem& vr_system, int eye)
 			{
-				return vr_system.GetViewFromEye(position, eye);
+				return vr_system.GetViewFromEye(position, eye, front);
 			}
 
             void MoveForward()
@@ -152,6 +152,10 @@ namespace Engine
             const glm::vec3& GetFront() const
             {
                 return front;
+            }
+			void UpdateFromHMD(VRSystem& vr_system)
+            {
+	            
             }
         };
     }
