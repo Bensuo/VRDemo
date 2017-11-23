@@ -5,7 +5,7 @@ namespace Engine
 {
     namespace Rendering
     {
-        void Skybox::Draw(const IRenderingEngine& rendering_engine)
+        void Skybox::Draw(IRenderingEngine& rendering_engine)
         {
             rendering_engine.Draw(this);
         }

@@ -112,6 +112,9 @@
     <ClCompile Include="VRSystem.cpp">
       <Filter>Engine\VR</Filter>
     </ClCompile>
+    <ClCompile Include="ModelFactory.cpp">
+      <Filter>Engine\Content\Factories</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -131,9 +134,6 @@
     </ClInclude>
     <ClInclude Include="ModelFactory.h">
       <Filter>Engine\Content\Factories</Filter>
-    </ClInclude>
-    <ClInclude Include="Content.h">
-      <Filter>Engine\Content</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Engine\Rendering\Camera</Filter>
@@ -212,6 +212,15 @@
     </ClInclude>
     <ClInclude Include="VRSystem.h">
       <Filter>Engine\VR</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform3D.hpp">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureFactory.h">
+      <Filter>Engine\Content\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="ContentLoader.h">
+      <Filter>Engine\Content</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

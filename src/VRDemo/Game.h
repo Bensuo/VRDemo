@@ -3,7 +3,7 @@
 
 #include "Window.h"
 #include "GameTimer.h"
-#include "Content.h"
+#include "ContentLoader.h"
 #include "RenderingEngine.h"
 #include <OVR_CAPI_GL.h>
 namespace Engine
@@ -20,7 +20,7 @@ namespace Engine
          */
         void GameLoop();
     protected:
-        Content::Content content;
+        Content::ContentLoader content;
         Windowing::Window window;
 		VRSystem vr_system;
         Rendering::RenderingEngine rendering_engine;

@@ -1,9 +1,10 @@
-#ifndef CONTENT_H
-#define CONTENT_H
+#ifndef CONTENT_LOADER_H
+#define CONTENT_LOADER_H
 
 #include "SkyboxFactory.h"
 #include "ModelFactory.h"
 #include "ShaderFactory.h"
+#include "TextureFactory.h"
 
 namespace Engine
 {
@@ -12,11 +13,13 @@ namespace Engine
         /**
          * \brief Simple content loader. Abstracts asset importing implementation.
          */
-        class Content
+        class ContentLoader
         {
             ShaderFactory shader_factory;
             SkyboxFactory skybox_factory;
-            ModelFactory model_factory;
+            ModelFactory model_factory{*this};
+			TextureFactory texture_factory;
+
         public:
             /**
              * \brief Load a new 3D model.
@@ -59,7 +62,12 @@ namespace Engine
             {
                 return shader_factory.Load(vertex, fragment, geometry);
             }
+
+			Rendering::Texture& LoadTexture(const std::string& path)
+            {
+				return texture_factory.Load(path);
+            }
         };
     }
 }
-#endif // CONTENT_H
+#endif // CONTENT_LOADER_H

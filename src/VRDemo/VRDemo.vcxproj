@@ -167,6 +167,7 @@
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="KeyboardState.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="ModelFactory.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="MouseState.cpp" />
     <ClCompile Include="RenderingEngine.cpp" />
@@ -182,7 +183,7 @@
   <ItemGroup>
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Content.h" />
+    <ClInclude Include="ContentLoader.h" />
     <ClInclude Include="Signal.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Keyboard.h" />
@@ -200,6 +201,8 @@
     <ClInclude Include="IShader.h" />
     <ClInclude Include="ISkybox.h" />
     <ClInclude Include="TextureBuffer.h" />
+    <ClInclude Include="TextureFactory.h" />
+    <ClInclude Include="Transform3D.hpp" />
     <ClInclude Include="VRDemoGame.h" />
     <ClInclude Include="IMesh.h" />
     <ClInclude Include="Model.h" />
