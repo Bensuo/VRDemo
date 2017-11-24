@@ -15,6 +15,7 @@ class VRDemoGame : public Game
 {
     Rendering::Camera camera;
     Rendering::Model dining_room;
+    Rendering::Model test_hands;
     Rendering::Skybox skybox;
 
     Rendering::Shader blinn_shader;

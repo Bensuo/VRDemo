@@ -8,6 +8,7 @@ void VRDemoGame::HandleInput()
 {
     const auto& keyboard_state = Input::Keyboard::GetState();
     const auto& mouse_state = Input::Mouse::GetState();
+    const auto vr_input_state = vr_system.GetInputState();
 
     if (keyboard_state.IsKeyDown(Key_Escape))
     {
@@ -209,7 +210,7 @@ VRDemoGame::VRDemoGame()
         "res/textures/front.bmp")),
     blinn_shader(content.LoadShader("res/shaders/blinn-phong.vs", "res/shaders/blinn-phong.fs")),
     skybox_shader(content.LoadShader("res/shaders/skybox.vs", "res/shaders/skybox.fs")),
-	textured_shader(content.LoadShader("res/shaders/textured.vs", "res/shaders/textured.fs")),
+    test_hands(content.LoadModel("res/models/cube.obj")),
     lamps_active(true),
     blinn_phong(true),
     lighting_active(true),
@@ -217,5 +218,4 @@ VRDemoGame::VRDemoGame()
 {
     SetUpLighting();
 	//dining_room.GetTransform().SetScale(glm::vec3(0.015f));
-	
 }

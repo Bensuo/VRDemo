@@ -9,10 +9,17 @@ struct VRControllerState
     Transform3D Transform;
 };
 
-struct VRInputState
+class VRInputState
 {
-    VRControllerState Left;
-    VRControllerState Right;
+private:
+    VRControllerState m_left;
+    VRControllerState m_right;
+public:
+    VRInputState(const VRControllerState left, const VRControllerState right)
+    : m_left(left), m_right(right) {}
+
+    const VRControllerState& GetLeft() { return m_left; }
+    const VRControllerState& GetRight() { return m_right; }
 };
 
 class VRSystem

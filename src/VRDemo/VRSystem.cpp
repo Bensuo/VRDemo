@@ -146,11 +146,22 @@ VRInputState VRSystem::GetInputState()
 {
     VRControllerState left, right;
 
-    double displayMidpointSeconds = 0.0;
-    ovrTrackingState trackState = ovr_GetTrackingState(session, displayMidpointSeconds, ovrTrue);
+    ovrTrackingState trackState = ovr_GetTrackingState(session, 0, ovrTrue);
     ovrInputState inputState;
 
-    return VRInputState();
+    auto pos_left = trackState.HandPoses[ovrHand_Left].ThePose.Position;
+    left.Transform.SetPosition(glm::vec3(pos_left.x, pos_left.y, pos_left.z));
+    auto rot_left = trackState.HandPoses[ovrHand_Left].ThePose.Orientation;
+    left.Transform.SetRotation(glm::quat(rot_left.x, rot_left.y, rot_left.z, rot_left.w));
+
+    auto pos_right = trackState.HandPoses[ovrHand_Right].ThePose.Position;
+    right.Transform.SetPosition(glm::vec3(pos_right.x, pos_right.y, pos_right.z));
+    auto rot_right = trackState.HandPoses[ovrHand_Right].ThePose.Orientation;
+    right.Transform.SetRotation(glm::quat(rot_right.x, rot_right.y, rot_right.z, rot_right.w));
+
+    std::cout << "Left pos: " << left.Transform.GetPosition().x << ", " << left.Transform.GetPosition().y << ", " << left.Transform.GetPosition().z << std::endl;
+
+    return VRInputState(left, right);
 }
 
 glm::mat4 VRSystem::GetViewFromEye(glm::vec3 eyePos, int eye, glm::vec3& front, float rotationY)
