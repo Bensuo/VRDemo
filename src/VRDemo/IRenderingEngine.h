@@ -3,7 +3,7 @@
 #include "ISkybox.h"
 #include <glm/mat4x2.hpp>
 #include <string>
-
+#include <glm/gtc/quaternion.hpp>
 
 namespace Engine
 {
@@ -31,7 +31,7 @@ namespace Engine
 
             virtual void TranslateMatrix(const glm::vec3& position) = 0;
             virtual void ScaleMatrix(const glm::vec3& scale) = 0;
-            virtual void RotateMatrix(const glm::vec3& axis) = 0;
+            virtual void RotateMatrix(const glm::quat& axis) = 0;
             virtual void MultiplyMatrix(const glm::mat4& matrix) = 0;
 
             virtual void End() = 0;

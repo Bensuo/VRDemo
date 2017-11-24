@@ -41,7 +41,7 @@ namespace Engine
             void PopMatrix() override;
             void TranslateMatrix(const glm::vec3& position) override;
             void ScaleMatrix(const glm::vec3& scale) override;
-            void RotateMatrix(const glm::vec3& axis) override;
+            void RotateMatrix(const glm::quat& axis) override;
             void MultiplyMatrix(const glm::mat4& matrix) override;
 
             void AddLights(const std::vector<SpotLight>& lights) const;

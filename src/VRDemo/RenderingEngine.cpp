@@ -10,6 +10,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "Shader.h"
+#include <glm/gtx/quaternion.hpp>
 
 namespace Engine
 {
@@ -157,16 +158,9 @@ namespace Engine
             matrix_stack.top() = glm::scale(matrix_stack.top(), scale);
         }
 
-        void RenderingEngine::RotateMatrix(const glm::vec3& axis)
+        void RenderingEngine::RotateMatrix(const glm::quat& axis)
         {
-            if (matrix_stack.size() == 0)
-                return;
-            if (axis.x != 0)
-                matrix_stack.top() = rotate(matrix_stack.top(), axis.x, glm::vec3(axis.x, 0, 0));
-            if (axis.y != 0)
-                matrix_stack.top() = rotate(matrix_stack.top(), axis.y, glm::vec3(0, axis.y, 0));
-            if (axis.z != 0)
-                matrix_stack.top() = rotate(matrix_stack.top(), axis.z, glm::vec3(0, 0, axis.z));
+            MultiplyMatrix(glm::toMat4(axis));
         }
 
         void RenderingEngine::MultiplyMatrix(const glm::mat4& matrix)

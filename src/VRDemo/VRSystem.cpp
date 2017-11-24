@@ -111,8 +111,6 @@ void VRSystem::EndFrame()
 	ovrResult result = ovr_EndFrame(session, 0, nullptr, &layers, 1);
 
 	//frameIndex++;
-
-	
 }
 
 void VRSystem::ClearEyeBuffer(int eye)
@@ -142,6 +140,17 @@ glm::mat4 VRSystem::GetProjectionMatrix(int eye)
 {
 	OVR::Matrix4f proj = ovrMatrix4f_Projection(hmd_desc.DefaultEyeFov[eye], 0.2f, 1000.0f, ovrProjection_None);
 	return glm::transpose(glm::make_mat4(&proj.M[0][0]));
+}
+
+VRInputState VRSystem::GetInputState()
+{
+    VRControllerState left, right;
+
+    double displayMidpointSeconds = 0.0;
+    ovrTrackingState trackState = ovr_GetTrackingState(session, displayMidpointSeconds, ovrTrue);
+    ovrInputState inputState;
+
+    return VRInputState();
 }
 
 glm::mat4 VRSystem::GetViewFromEye(glm::vec3 eyePos, int eye, glm::vec3& front, float rotationY)

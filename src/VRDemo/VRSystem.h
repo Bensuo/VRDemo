@@ -2,6 +2,18 @@
 #include <OVR_CAPI_GL.h>
 #include "TextureBuffer.h"
 #include <glm/glm.hpp>
+#include "Transform3D.hpp"
+
+struct VRControllerState
+{
+    Transform3D Transform;
+};
+
+struct VRInputState
+{
+    VRControllerState Left;
+    VRControllerState Right;
+};
 
 class VRSystem
 {
@@ -16,6 +28,8 @@ public:
 	void RenderMirror(int w, int h);
 	glm::mat4 GetViewFromEye(glm::vec3 eyePos, int eye, glm::vec3& front, float rotationY = 0.0f);
 	glm::mat4 GetProjectionMatrix(int eye);
+
+    VRInputState GetInputState();
 private:
 	ovrSession session;
 	ovrGraphicsLuid luid;
