@@ -106,7 +106,7 @@ void VRSystem::BeginFrame()
 	layer.Viewport[1] = OVR::Recti(0, 0, bufferSize.w, bufferSize.h);
 	layer.SensorSampleTime = ovr_GetTimeInSeconds();
 	double seconds = ovr_GetPredictedDisplayTime(session, 0);
-	ovrTrackingState hmdState = ovr_GetTrackingState(session, seconds, ovrTrue);
+	hmdState = ovr_GetTrackingState(session, seconds, ovrTrue);
 	ovr_CalcEyePoses(hmdState.HeadPose.ThePose, HmdToEyePose, layer.RenderPose);
 
 	//Wait to begin frame drawing
@@ -154,6 +154,12 @@ glm::mat4 VRSystem::GetProjectionMatrix(int eye)
         ovrProjection.M[0][2], ovrProjection.M[1][2], ovrProjection.M[2][2], ovrProjection.M[3][2],
         ovrProjection.M[0][3], ovrProjection.M[1][3], ovrProjection.M[2][3], ovrProjection.M[3][3]
     );
+}
+
+glm::vec3 VRSystem::GetFront()
+{
+    auto orient = _glmFromOvrQuat(hmdState.HeadPose.ThePose.Orientation);
+    return orient * glm::vec3(0, 0, -1);
 }
 
 void VRSystem::DrawAvatar(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & viewPos)

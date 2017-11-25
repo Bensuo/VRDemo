@@ -9,6 +9,7 @@ void VRDemoGame::HandleInput()
     const auto& keyboard_state = Input::Keyboard::GetState();
     const auto& mouse_state = Input::Mouse::GetState();
     const auto vr_input_state = vr_system.GetInputState();
+    const auto& left_axis = vr_input_state.GetLeft().ThumbstickAxis;
 
     if (keyboard_state.IsKeyDown(Key_Escape))
     {
@@ -80,8 +81,11 @@ void VRDemoGame::HandleInput()
         show_normal_mapping.Up();
     }
 
+    camera.SetFront(vr_system.GetFront());
     const auto& motion = mouse_state.RelativeMotion();
     camera.RotateFromAxes(motion.x, motion.y);
+
+    camera.MoveFromAxes(left_axis.x, left_axis.y);
 }
 
 void VRDemoGame::Update(const GameTime delta_time)
@@ -97,10 +101,13 @@ void VRDemoGame::Update(const GameTime delta_time)
 void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
 {
     point_light.Position = vr_system.EyePos(eye);
-    flash_light.Position = vr_system.GetInputState().GetLeft().Transform.GetPosition();
+    flash_light.Position = vr_system.GetInputState().GetLeft().Transform.GetPosition() - camera.Position();
     flash_light.Direction = vr_system.GetInputState().GetLeft().Transform.GetRotation() * glm::vec3(0, 0, -1);
 
-	rendering_engine.Begin(vr_system.GetViewFromEye(eye), vr_system.GetProjectionMatrix(eye), vr_system.EyePos(eye), shader);
+    auto view = vr_system.GetViewFromEye(eye);
+    view = glm::translate(view, camera.Position());
+
+	rendering_engine.Begin(view, vr_system.GetProjectionMatrix(eye), vr_system.EyePos(eye), shader);
     {
         shader.SetBool("blinn_phong", blinn_phong);
         shader.SetBool("lamps_active", lamps_active);

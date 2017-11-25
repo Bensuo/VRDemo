@@ -30,11 +30,7 @@ namespace Engine
 
             void UpdateCameraVectors()
             {
-                glm::vec3 new_front;
-                new_front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-                new_front.y = sin(glm::radians(pitch));
-                new_front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-                front = normalize(new_front);
+                front = normalize(front);
                 right = normalize(cross(front, world_up));
                 up = normalize(cross(right, front));
             }
@@ -48,6 +44,11 @@ namespace Engine
             const glm::vec3& Position() const
             {
                 return position;
+            }
+
+            void SetFront(const glm::vec3& front)
+            {
+                this->front = front;
             }
 
             explicit Camera(
@@ -100,9 +101,7 @@ namespace Engine
 
             void Update(const float delta_time)
             {
-                const auto speed = movement_speed * delta_time;
-
-                const auto velocity = movement * speed;
+                const auto velocity = movement * delta_time;
 
                 position += velocity;
 
@@ -111,7 +110,7 @@ namespace Engine
 
             void MoveFromAxes(float xoffset, float yoffset)
             {
-                glm::vec2 axes(xoffset, -yoffset);
+                glm::vec2 axes(-xoffset, -yoffset);
 
                 if (axes != glm::vec2(0))
                 {
