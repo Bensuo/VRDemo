@@ -3,27 +3,9 @@
 #include <Extras/OVR_Math.h>
 #include <glm/gtc/type_ptr.inl>
 
-
 VRSystem::VRSystem()
 {
-	//Init vr
-	ovrResult result = ovr_Initialize(nullptr);
-	if (OVR_FAILURE(result))
-		std::cout << "OVR FAILED INIT" << std::endl;
-	result = ovr_Create(&session, &luid);
-	if (OVR_FAILURE(result))
-	{
-		ovr_Shutdown();
-		std::cout << "OVR ERROR SHUTTING DOWN" << std::endl;
-		return;
-	}
-	//m_vr_resolution = m_hmd_desc.Resolution;
-	hmd_desc = ovr_GetHmdDesc(session);
-	
-
-	ovr_SetTrackingOriginType(session, ovrTrackingOrigin_FloorLevel);
 }
-
 
 VRSystem::~VRSystem()
 {
@@ -31,6 +13,29 @@ VRSystem::~VRSystem()
 
 void VRSystem::Init()
 {
+    //Init vr
+    ovrResult result = ovr_Initialize(nullptr);
+    if (OVR_FAILURE(result))
+    {
+        std::cout << "OVR FAILED INIT" << std::endl;
+        InitialiseFail();
+        return;
+    }
+
+    result = ovr_Create(&session, &luid);
+    if (OVR_FAILURE(result))
+    {
+        ovr_Shutdown();
+        std::cout << "OVR ERROR SHUTTING DOWN" << std::endl;
+        CreateSessionFail();
+        return;
+    }
+
+    //m_vr_resolution = m_hmd_desc.Resolution;
+    hmd_desc = ovr_GetHmdDesc(session);
+
+    ovr_SetTrackingOriginType(session, ovrTrackingOrigin_FloorLevel);
+
 	//Setup texture and depth buffers
 	for (int eye = 0; eye < 2; eye++)
 	{
@@ -62,7 +67,7 @@ void VRSystem::Init()
 	desc.Format = OVR_FORMAT_R8G8B8A8_UNORM_SRGB;
 
 	// Create mirror texture and an FBO used to copy mirror texture to back buffer
-	ovrResult result = ovr_CreateMirrorTextureGL(session, &desc, &mirror_texture);
+	result = ovr_CreateMirrorTextureGL(session, &desc, &mirror_texture);
 	result = ovr_GetMirrorTextureBufferGL(session, mirror_texture, &mirror_tex_id);
 
 	glGenFramebuffers(1, &mirror_fbo);
@@ -102,7 +107,6 @@ void VRSystem::BeginFrame()
 	//Wait to begin frame drawing
 	ovrResult result = ovr_WaitToBeginFrame(session, 0);
 	result = ovr_BeginFrame(session, 0);
-	
 }
 
 void VRSystem::EndFrame()
@@ -111,8 +115,6 @@ void VRSystem::EndFrame()
 	ovrResult result = ovr_EndFrame(session, 0, nullptr, &layers, 1);
 
 	//frameIndex++;
-
-	
 }
 
 void VRSystem::ClearEyeBuffer(int eye)
@@ -155,6 +157,5 @@ glm::mat4 VRSystem::GetViewFromEye(glm::vec3 eyePos, int eye, glm::vec3& front, 
 
 	OVR::Matrix4f view = OVR::Matrix4f::LookAtRH(shiftedEyePos, shiftedEyePos + finalForward, finalUp);
 
-	
 	return glm::transpose(glm::make_mat4(&view.M[0][0]));
 }

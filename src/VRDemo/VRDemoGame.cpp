@@ -11,7 +11,7 @@ void VRDemoGame::HandleInput()
 
     if (keyboard_state.IsKeyDown(Key_Escape))
     {
-        Quit();
+        Quit(Success);
     }
 
     if (keyboard_state.IsKeyDown(Key_W))
@@ -216,6 +216,7 @@ VRDemoGame::VRDemoGame()
     show_normal_mapping(true)
 {
     SetUpLighting();
+
 	//dining_room.GetTransform().SetScale(glm::vec3(0.015f));
-	
+
 }

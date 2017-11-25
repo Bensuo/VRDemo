@@ -6,8 +6,15 @@
 #include "ContentLoader.h"
 #include "RenderingEngine.h"
 #include <OVR_CAPI_GL.h>
+
 namespace Engine
 {
+    enum ExitCode
+    {
+        Success = 0,
+        Error = 1
+    };
+
     /**
      * \brief Our base-game class. Abstracts the game loop, graphics device and windowing implementation details from subclasses.
      */
@@ -25,11 +32,12 @@ namespace Engine
 		VRSystem vr_system;
         Rendering::RenderingEngine rendering_engine;
         Time::GameTimer game_timer;
-		
+        ExitCode exit_code;
+
         /**
          * \brief Exit the main game loop
          */
-        void Quit();
+        void Quit(const ExitCode exit_code);
 
         /**
          * \brief Update the main event loop.

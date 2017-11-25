@@ -5,7 +5,6 @@ namespace Engine
 {
     void Game::GameLoop()
     {
-        running = true;
         game_timer.Initialize();
         while (running)
         {
@@ -41,9 +40,16 @@ namespace Engine
         window.SwapBuffer();
     }
 
-    void Game::Quit()
+    void Game::Quit(const ExitCode exit_code)
     {
-        std::cout << "Quitting BlinnPhongGame" << std::endl;
+        this->exit_code = exit_code;
+
+        switch (exit_code)
+        {
+            case Success: std::cout << "Exiting game." << std::endl;
+            case Error: std::cout << "Exiting game, error handled successfully." << std::endl;
+        } 
+        
         running = false;
     }
 
@@ -51,10 +57,21 @@ namespace Engine
 		: window(1280, 720, "VRDemo"),
 		rendering_engine(vr_system)
     {
+        vr_system.CreateSessionFail.Connect([&]() 
+        {
+            Quit(Error);
+        });
+
+        vr_system.InitialiseFail.Connect([&]()
+        {
+            Quit(Error);
+        });
+
         window.OnClose.Connect([&]()
         {
-            Quit();
+            Quit(Success);
         });
+
 		vr_system.Init();
     }
 
@@ -63,6 +80,6 @@ namespace Engine
         //start game & run game loop
         GameLoop();
 
-        return 0;
+        return exit_code;
     }
 }
