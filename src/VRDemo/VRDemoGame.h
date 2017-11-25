@@ -15,12 +15,13 @@ class VRDemoGame : public Game
 {
     Rendering::Camera camera;
     Rendering::Model dining_room;
+	Rendering::Model bb8;
     Rendering::Skybox skybox;
 
     Rendering::Shader blinn_shader;
     Rendering::Shader skybox_shader;
 	Rendering::Shader textured_shader;
-
+	Rendering::Shader parallax_shader;
     Rendering::SpotLight flash_light;
     Rendering::DirectionalLight directional_light;
     Rendering::PointLight point_light;

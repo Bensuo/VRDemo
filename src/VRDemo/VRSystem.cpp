@@ -159,3 +159,9 @@ glm::mat4 VRSystem::GetViewFromEye(glm::vec3 eyePos, int eye, glm::vec3& front, 
 
 	return glm::transpose(glm::make_mat4(&view.M[0][0]));
 }
+
+glm::vec3 VRSystem::GetEyeOffset(int eye)
+{
+	auto pos = layer.RenderPose[eye].Position;
+	return glm::vec3(pos.x, pos.y, pos.z);
+}

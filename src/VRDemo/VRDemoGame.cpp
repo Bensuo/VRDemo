@@ -97,7 +97,7 @@ void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
     flash_light.Position = camera.GetPosition();
     flash_light.Direction = camera.GetFront();
 
-	rendering_engine.Begin(camera.GetViewVR(vr_system, eye), vr_system.GetProjectionMatrix(eye), camera.GetPosition(), shader);
+	rendering_engine.Begin(camera.GetViewVR(vr_system, eye), vr_system.GetProjectionMatrix(eye), camera.GetPosition() + vr_system.GetEyeOffset(eye), shader);
     {
         shader.SetBool("blinn_phong", blinn_phong);
         shader.SetBool("lamps_active", lamps_active);
@@ -111,6 +111,7 @@ void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
         rendering_engine.AddLight(directional_light);
 
         dining_room.Draw(rendering_engine);
+		bb8.Draw(rendering_engine);
     }
     rendering_engine.End();
 }
@@ -132,7 +133,7 @@ void VRDemoGame::Render()
 	{
 		rendering_engine.ClearEyeBuffer(i);
 		RenderSkybox(skybox_shader, i);
-		RenderScene(blinn_shader, i);
+		RenderScene(parallax_shader, i);
 		rendering_engine.Commit(i);
 	}
 	rendering_engine.EndRender();
@@ -190,26 +191,28 @@ void VRDemoGame::SetUpLighting()
     spot_light2.Position = glm::vec3(1.0, 4.0, -2.0);
     spot_light2.Direction = glm::vec3(0.0, -1.0, 0.0);
 
-    spot_lights.emplace_back(spot_light);
+    spot_lights.emplace_back(spot_light); 
     spot_lights.emplace_back(spot_light2);
 }
 
 VRDemoGame::VRDemoGame()
-    : camera(glm::perspective(1.0f, 1280.0f / 720.0f, 0.1f, 100.0f),
-        glm::vec3(-0.6, 0, 5),
-        glm::vec3(0.0, 1.0, 0.0),
-        -90.0f,
-        -23.33f),
-    dining_room(content.LoadModel("res/models/sponza2/sponza.obj")),
-    skybox(content.LoadSkybox("res/textures/right.bmp",
-        "res/textures/left.bmp",
-        "res/textures/top.bmp",
-        "res/textures/bottom.bmp",
-        "res/textures/back.bmp",
-        "res/textures/front.bmp")),
-    blinn_shader(content.LoadShader("res/shaders/blinn-phong.vs", "res/shaders/blinn-phong.fs")),
-    skybox_shader(content.LoadShader("res/shaders/skybox.vs", "res/shaders/skybox.fs")),
+	: camera(glm::perspective(1.0f, 1280.0f / 720.0f, 0.1f, 100.0f),
+		glm::vec3(-0.6, 0, 5),
+		glm::vec3(0.0, 1.0, 0.0),
+		-90.0f,
+		-23.33f),
+	dining_room(content.LoadModel("res/models/sponza2/sponza.obj")),
+	//bb8(content.LoadModel("res/models/BB8 New/bb8.fbx")),
+	skybox(content.LoadSkybox("res/textures/right.bmp",
+		"res/textures/left.bmp",
+		"res/textures/top.bmp",
+		"res/textures/bottom.bmp",
+		"res/textures/back.bmp",
+		"res/textures/front.bmp")),
+	blinn_shader(content.LoadShader("res/shaders/blinn-phong.vs", "res/shaders/blinn-phong.fs")),
+	skybox_shader(content.LoadShader("res/shaders/skybox.vs", "res/shaders/skybox.fs")),
 	textured_shader(content.LoadShader("res/shaders/textured.vs", "res/shaders/textured.fs")),
+	parallax_shader(content.LoadShader("res/shaders/parallax-blinn.vs", "res/shaders/parallax-blinn.fs")),
     lamps_active(true),
     blinn_phong(true),
     lighting_active(true),
@@ -218,5 +221,6 @@ VRDemoGame::VRDemoGame()
     SetUpLighting();
 
 	//dining_room.GetTransform().SetScale(glm::vec3(0.015f));
+	//bb8.GetTransform().SetScale(glm::vec3(0.01f));
 
 }
