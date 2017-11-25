@@ -108,6 +108,11 @@ namespace Engine
             glUniform1i(glGetUniformLocation(program, uniform.c_str()), boolean);
         }
 
+        GLuint Shader::Program()
+        {
+            return program;
+        }
+
         void Shader::SetMaterial(const Material* material) const
         {
             SetVec3("material.ambient", material->Ambient);

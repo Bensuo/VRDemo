@@ -74,7 +74,7 @@ Engine::Rendering::Mesh Engine::Content::ModelFactory::ProcessMesh(aiMesh *mesh,
 	for (GLuint i = 0; i < mesh->mNumVertices; i++)
 	{
 		Rendering::Vertex vertex;
-		glm::vec4 vector;
+		glm::vec3 vector;
 
 		vector.x = mesh->mVertices[i].x;
 		vector.y = mesh->mVertices[i].y;

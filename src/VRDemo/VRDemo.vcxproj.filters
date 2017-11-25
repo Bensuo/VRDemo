@@ -115,6 +115,15 @@
     <ClCompile Include="ModelFactory.cpp">
       <Filter>Engine\Content\Factories</Filter>
     </ClCompile>
+    <ClCompile Include="Avatar.cpp">
+      <Filter>Engine\VR</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderFactory.cpp">
+      <Filter>Engine\Content\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="OVR_PlatformLoader.cpp">
+      <Filter>Engine\VR</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -221,6 +230,12 @@
     </ClInclude>
     <ClInclude Include="ContentLoader.h">
       <Filter>Engine\Content</Filter>
+    </ClInclude>
+    <ClInclude Include="Avatar.h">
+      <Filter>Engine\VR</Filter>
+    </ClInclude>
+    <ClInclude Include="OvrConversions.h">
+      <Filter>Engine\VR</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -34,8 +34,6 @@ class VRDemoGame : public Game
     Input::Button lighting_active;
     Input::Button show_normal_mapping;
 	
-	
-
     /**
      * \brief Render a skybox.
      * \param shader The shader you want to use while rendering the skybox.

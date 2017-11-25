@@ -82,7 +82,7 @@ namespace Engine
 
 			glm::mat4 GetViewVR(VRSystem& vr_system, int eye)
 			{
-				return vr_system.GetViewFromEye(position, eye, front);
+				return vr_system.GetViewFromEye(eye);
 			}
 
             void MoveForward()

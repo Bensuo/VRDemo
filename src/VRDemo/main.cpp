@@ -20,6 +20,6 @@
 
 int main(int argc, char* argv[])
 {
-    VRDemoGame blinn_phong_game;
-    return blinn_phong_game.Run();
+    VRDemoGame vr_demo_game;
+    return vr_demo_game.Run();
 }

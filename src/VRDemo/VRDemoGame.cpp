@@ -89,6 +89,8 @@ void VRDemoGame::Update(const GameTime delta_time)
     HandleInput();
     camera.Update(delta_time);
 
+    vr_system.UpdateAvatar(delta_time);
+
     Game::Update(delta_time);
 }
 
@@ -134,9 +136,11 @@ void VRDemoGame::Render()
 		rendering_engine.ClearEyeBuffer(i);
 		RenderSkybox(skybox_shader, i);
 		RenderScene(blinn_shader, i);
+        vr_system.DrawAvatar(camera.GetViewVR(vr_system, i), vr_system.GetProjectionMatrix(i), vr_system.EyePos(i));
 		rendering_engine.Commit(i);
 	}
 	rendering_engine.EndRender();
+
 
     Game::Render();
 }

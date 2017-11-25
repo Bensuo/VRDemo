@@ -1,8 +1,9 @@
 #pragma once
+
 #include <OVR_CAPI_GL.h>
 #include "TextureBuffer.h"
-#include <glm/glm.hpp>
 #include "Transform3D.hpp"
+#include "Avatar.h"
 
 struct VRControllerState
 {
@@ -27,17 +28,24 @@ class VRSystem
 public:
 	VRSystem();
 	~VRSystem();
+
 	void Init();
 	void BeginFrame();
 	void EndFrame();
 	void ClearEyeBuffer(int eye);
 	void CommitBuffer(int eye);
 	void RenderMirror(int w, int h);
-	glm::mat4 GetViewFromEye(glm::vec3 eyePos, int eye, glm::vec3& front, float rotationY = 0.0f);
+	glm::mat4 GetViewFromEye(int eye);
 	glm::mat4 GetProjectionMatrix(int eye);
 
+    void DrawAvatar(const glm::mat4& view, const glm::mat4& proj, const glm::vec3& viewPos);
+    void UpdateAvatar(const float delta_time);
+
     VRInputState GetInputState();
+
+    glm::vec3 EyePos(int eye);
 private:
+    int frameIndex;
 	ovrSession session;
 	ovrGraphicsLuid luid;
 	ovrHmdDesc hmd_desc;
@@ -47,5 +55,6 @@ private:
 	GLuint mirror_fbo;
 	GLuint mirror_tex_id;
 	ovrLayerEyeFov layer;
+    Avatar m_avatar;
 };
 
