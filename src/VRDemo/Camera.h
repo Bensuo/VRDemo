@@ -1,17 +1,16 @@
-#ifndef CAMERA_H
-#define CAMERA_H
+#ifndef CAMERA_HPP
+#define CAMERA_HPP
 
 #include <glm/gtc/matrix_transform.hpp>
-#include "GameTimer.h"
-#include "VRSystem.h"
+#include <glm/gtx/rotate_vector.hpp> 
 
 namespace Engine
 {
     namespace Rendering
     {
         /**
-         * \brief Basic first-person camera class. Uses the relative motion of the mouse and keyboard input to construct a view matrix.
-         */
+        * \brief Basic first-person camera class. Uses the relative motion of the mouse and keyboard input to construct a view matrix.
+        */
         class Camera
         {
             glm::vec3 position;
@@ -31,23 +30,22 @@ namespace Engine
 
             void UpdateCameraVectors()
             {
-                /*glm::vec3 new_front;
+                glm::vec3 new_front;
                 new_front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
                 new_front.y = sin(glm::radians(pitch));
                 new_front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-                front = normalize(new_front);*/
-				front.y = 0;
+                front = normalize(new_front);
                 right = normalize(cross(front, world_up));
                 up = normalize(cross(right, front));
             }
 
         public:
-            const glm::mat4& GetProjection() const
+            const glm::mat4& Projection() const
             {
                 return projection;
             }
 
-            const glm::vec3& GetPosition() const
+            const glm::vec3& Position() const
             {
                 return position;
             }
@@ -59,7 +57,7 @@ namespace Engine
                 const float yaw = 90.0f,
                 const float pitch = 23.33f,
                 const float mouse_sensitivity = 0.1f,
-                const float movement_speed = 1.5f,
+                const float movement_speed = 20.0f,
                 const float zoom = 45.0f)
                 : position(position),
                 front(glm::vec3(0)),
@@ -75,15 +73,10 @@ namespace Engine
                 UpdateCameraVectors();
             }
 
-            glm::mat4 GetView() const
+            glm::mat4 View() const
             {
                 return lookAt(position, position + front, up);
             }
-
-			glm::mat4 GetViewVR(VRSystem& vr_system, int eye)
-			{
-				return vr_system.GetViewFromEye(eye);
-			}
 
             void MoveForward()
             {
@@ -105,14 +98,9 @@ namespace Engine
                 movement += right;
             }
 
-            void Update(const GameTime delta_time)
+            void Update(const float delta_time)
             {
                 const auto speed = movement_speed * delta_time;
-
-                if (movement != glm::vec3(0))
-                {
-                    movement = normalize(movement);
-                }
 
                 const auto velocity = movement * speed;
 
@@ -121,13 +109,21 @@ namespace Engine
                 movement = glm::vec3();
             }
 
-            void ProcesMotion(float xoffset, float yoffset, const GLboolean constrain_pitch = true)
+            void MoveFromAxes(float xoffset, float yoffset)
             {
-                xoffset *= mouse_sensitivity;
-                yoffset *= mouse_sensitivity;
+                glm::vec2 axes(xoffset, -yoffset);
 
-                yaw += xoffset;
-                pitch += yoffset;
+                if (axes != glm::vec2(0))
+                {
+                    movement += front * axes.y;
+                    movement += glm::normalize(glm::cross(front, up)) * axes.x;
+                }
+            }
+
+            void RotateFromAxes(float xoffset, float yoffset, const bool constrain_pitch = true)
+            {
+                yaw += xoffset * 3;
+                pitch -= yoffset * 3;
 
                 if (constrain_pitch)
                 {
@@ -138,6 +134,11 @@ namespace Engine
                 }
 
                 UpdateCameraVectors();
+            }
+
+            void SetPosition(const glm::vec3& position)
+            {
+                this->position = position;
             }
 
             void ProcessMouseScroll(const float yoffset)
@@ -153,10 +154,6 @@ namespace Engine
             const glm::vec3& GetFront() const
             {
                 return front;
-            }
-			void UpdateFromHMD(VRSystem& vr_system)
-            {
-	            
             }
         };
     }

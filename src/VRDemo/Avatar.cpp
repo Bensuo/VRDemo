@@ -12,7 +12,7 @@
 #include "ShaderFactory.h"
 
 Avatar::Avatar(ovrSession ovr)
-    : ovr(ovr), _avatar(nullptr)
+    : m_ovr(ovr), m_avatar(nullptr)
 {
     ovrAvatar_Initialize("VRDemo");
 
@@ -26,14 +26,14 @@ Avatar::Avatar(ovrSession ovr)
     ovrAvatar_RequestAvatarSpecification(userID);
 
     char errorBuffer[512];
-    _skinnedMeshProgram = Engine::Content::ShaderFactory::Load("res/shaders/AvatarVertexShader.glsl", "res/shaders/AvatarFragmentShader.glsl").Program();
-    if (_skinnedMeshProgram < 0) {
+    m_skinned_mesh_program = Engine::Content::ShaderFactory::Load("res/shaders/AvatarVertexShader.glsl", "res/shaders/AvatarFragmentShader.glsl").Program();
+    if (m_skinned_mesh_program < 0) {
         ovr_Destroy(ovr);
         ovr_Shutdown();         
         std::abort();
     }
-    _skinnedMeshPBSProgram = Engine::Content::ShaderFactory::Load("res/shaders/AvatarVertexShader.glsl", "res/shaders/AvatarFragmentShaderPBS.glsl").Program();
-    if (_skinnedMeshPBSProgram < 0) {
+    m_skinned_mesh_PBS_program = Engine::Content::ShaderFactory::Load("res/shaders/AvatarVertexShader.glsl", "res/shaders/AvatarFragmentShaderPBS.glsl").Program();
+    if (m_skinned_mesh_PBS_program < 0) {
         ovr_Destroy(ovr);
         ovr_Shutdown();        
         std::abort();
@@ -43,40 +43,40 @@ Avatar::Avatar(ovrSession ovr)
     ovr_RecenterTrackingOrigin(ovr);
 }
 
-void Avatar::_handleAvatarSpecification(const ovrAvatarMessage_AvatarSpecification* message)
+void Avatar::HandleAvatarSpecification(const ovrAvatarMessage_AvatarSpecification* message)
 {
     // Create the avatar instance
-    _avatar = ovrAvatar_Create(message->avatarSpec, ovrAvatarCapability_All);
+    m_avatar = ovrAvatar_Create(message->avatarSpec, ovrAvatarCapability_All);
 
     // Trigger load operations for all of the assets referenced by the avatar
-    uint32_t refCount = ovrAvatar_GetReferencedAssetCount(_avatar);
+    uint32_t refCount = ovrAvatar_GetReferencedAssetCount(m_avatar);
     for (uint32_t i = 0; i < refCount; ++i)
     {
-        ovrAvatarAssetID id = ovrAvatar_GetReferencedAsset(_avatar, i);
+        ovrAvatarAssetID id = ovrAvatar_GetReferencedAsset(m_avatar, i);
         ovrAvatarAsset_BeginLoading(id);
-        ++_loadingAssets;
+        ++m_loading_assets;
     }
-    printf("Loading %d assets...\r\n", _loadingAssets);
+    printf("Loading %d assets...\r\n", m_loading_assets);
 }
 
-Avatar::MeshData* Avatar::_loadMesh(const ovrAvatarMeshAssetData* data)
+Avatar::MeshData* Avatar::LoadMesh(const ovrAvatarMeshAssetData* data)
 {
     MeshData* mesh = new MeshData();
 
     // Create the vertex array and buffer
-    glGenVertexArrays(1, &mesh->vertexArray);
-    glGenBuffers(1, &mesh->vertexBuffer);
-    glGenBuffers(1, &mesh->elementBuffer);
+    glGenVertexArrays(1, &mesh->m_vertex_array);
+    glGenBuffers(1, &mesh->m_vertex_buffer);
+    glGenBuffers(1, &mesh->m_element_buffer);
 
     // Bind the vertex buffer and assign the vertex data
-    glBindVertexArray(mesh->vertexArray);
-    glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBuffer);
+    glBindVertexArray(mesh->m_vertex_array);
+    glBindBuffer(GL_ARRAY_BUFFER, mesh->m_vertex_buffer);
     glBufferData(GL_ARRAY_BUFFER, data->vertexCount * sizeof(ovrAvatarMeshVertex), data->vertexBuffer, GL_STATIC_DRAW);
 
     // Bind the index buffer and assign the index data
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->elementBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->m_element_buffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, data->indexCount * sizeof(GLushort), data->indexBuffer, GL_STATIC_DRAW);
-    mesh->elementCount = data->indexCount;
+    mesh->m_element_count = data->indexCount;
 
     // Fill in the array attributes
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(ovrAvatarMeshVertex), &((ovrAvatarMeshVertex*)0)->x);
@@ -96,15 +96,15 @@ Avatar::MeshData* Avatar::_loadMesh(const ovrAvatarMeshAssetData* data)
     glBindVertexArray(0);
 
     // Translate the bind pose
-    _computeWorldPose(data->skinnedBindPose, mesh->bindPose);
+    _computeWorldPose(data->skinnedBindPose, mesh->m_bind_pose);
     for (uint32_t i = 0; i < data->skinnedBindPose.jointCount; ++i)
     {
-        mesh->inverseBindPose[i] = glm::inverse(mesh->bindPose[i]);
+        mesh->m_inverse_bind_pose[i] = glm::inverse(mesh->m_bind_pose[i]);
     }
     return mesh;
 }
 
-void Avatar::_handleAssetLoaded(const ovrAvatarMessage_AssetLoaded* message)
+void Avatar::HandleAssetLoaded(const ovrAvatarMessage_AssetLoaded* message)
 {
     // Determine the type of the asset that got loaded
     ovrAvatarAssetType assetType = ovrAvatarAsset_GetType(message->asset);
@@ -114,25 +114,25 @@ void Avatar::_handleAssetLoaded(const ovrAvatarMessage_AssetLoaded* message)
     switch (assetType)
     {
     case ovrAvatarAssetType_Mesh:
-        data = _loadMesh(ovrAvatarAsset_GetMeshData(message->asset));
+        data = LoadMesh(ovrAvatarAsset_GetMeshData(message->asset));
         break;
     case ovrAvatarAssetType_Texture:
-        data = _loadTexture(ovrAvatarAsset_GetTextureData(message->asset));
+        data = LoadTexture(ovrAvatarAsset_GetTextureData(message->asset));
         break;
     }
 
     // Store the data that we loaded for the asset in the asset map
-    _assetMap[message->assetID] = data;
-    --_loadingAssets;
-    printf("Loading %d assets...\r\n", _loadingAssets);
+    m_asset_map[message->assetID] = data;
+    --m_loading_assets;
+    printf("Loading %d assets...\r\n", m_loading_assets);
 }
 
-Avatar::TextureData* Avatar::_loadTexture(const ovrAvatarTextureAssetData* data)
+Avatar::TextureData* Avatar::LoadTexture(const ovrAvatarTextureAssetData* data)
 {
     // Create a texture
     TextureData* texture = new TextureData();
-    glGenTextures(1, &texture->textureID);
-    glBindTexture(GL_TEXTURE_2D, texture->textureID);
+    glGenTextures(1, &texture->texture_ID);
+    glBindTexture(GL_TEXTURE_2D, texture->texture_ID);
 
     // Load the image data
     switch (data->format)
@@ -186,7 +186,7 @@ Avatar::~Avatar()
 {
 }
 
-void Avatar::_setTextureSamplers(GLuint program, const char uniformName[], size_t count, const int textureUnits[], const ovrAvatarAssetID assetIDs[])
+void Avatar::SetTextureSamplers(GLuint program, const char uniformName[], size_t count, const int textureUnits[], const ovrAvatarAssetID assetIDs[])
 {
     for (int i = 0; i < count; ++i)
     {
@@ -195,11 +195,11 @@ void Avatar::_setTextureSamplers(GLuint program, const char uniformName[], size_
         GLuint textureID = 0;
         if (assetID)
         {
-            void* data = _assetMap[assetID];
+            void* data = m_asset_map[assetID];
             if (data)
             {
                 TextureData* textureData = (TextureData*)data;
-                textureID = textureData->textureID;
+                textureID = textureData->texture_ID;
             }
         }
         glActiveTexture(GL_TEXTURE0 + textureUnits[i]);
@@ -210,21 +210,21 @@ void Avatar::_setTextureSamplers(GLuint program, const char uniformName[], size_
 }
 
 
-void Avatar::_setTextureSampler(GLuint program, int textureUnit, const char uniformName[], ovrAvatarAssetID assetID)
+void Avatar::SetTextureSampler(GLuint program, int textureUnit, const char uniformName[], ovrAvatarAssetID assetID)
 {
     GLuint textureID = 0;
     if (assetID)
     {
-        void* data = _assetMap[assetID];
+        void* data = m_asset_map[assetID];
         TextureData* textureData = (TextureData*)data;
-        textureID = textureData->textureID;
+        textureID = textureData->texture_ID;
     }
     glActiveTexture(GL_TEXTURE0 + textureUnit);
     glBindTexture(GL_TEXTURE_2D, textureID);
     glUniform1i(glGetUniformLocation(program, uniformName), textureUnit);
 }
 
-void Avatar::_setMeshState(
+void Avatar::SetMeshState(
     GLuint program,
     const ovrAvatarTransform& localTransform,
     const MeshData* data,
@@ -245,7 +245,7 @@ void Avatar::_setMeshState(
     _computeWorldPose(skinnedPose, skinnedPoses);
     for (uint32_t i = 0; i < skinnedPose.jointCount; ++i)
     {
-        skinnedPoses[i] = skinnedPoses[i] * data->inverseBindPose[i];
+        skinnedPoses[i] = skinnedPoses[i] * data->m_inverse_bind_pose[i];
     }
 
     // Pass the world view position to the shader for view-dependent rendering
@@ -257,14 +257,14 @@ void Avatar::_setMeshState(
     glUniformMatrix4fv(glGetUniformLocation(program, "meshPose"), (GLsizei)skinnedPose.jointCount, 0, glm::value_ptr(*skinnedPoses));
 }
 
-void Avatar::_setMaterialState(GLuint program, const ovrAvatarMaterialState* state, glm::mat4* projectorInv)
+void Avatar::SetMaterialState(GLuint program, const ovrAvatarMaterialState* state, glm::mat4* projectorInv)
 {
     // Assign the fragment uniforms
     glUniform1i(glGetUniformLocation(program, "useAlpha"), state->alphaMaskTextureID != 0);
     glUniform1i(glGetUniformLocation(program, "useNormalMap"), state->normalMapTextureID != 0);
     glUniform1i(glGetUniformLocation(program, "useRoughnessMap"), state->roughnessMapTextureID != 0);
 
-    glUniform1f(glGetUniformLocation(program, "elapsedSeconds"), _elapsedSeconds);
+    glUniform1f(glGetUniformLocation(program, "elapsedSeconds"), m_elapsed_seconds);
 
     if (projectorInv)
     {
@@ -281,13 +281,13 @@ void Avatar::_setMaterialState(GLuint program, const ovrAvatarMaterialState* sta
     glUniform1i(glGetUniformLocation(program, "baseMaskType"), state->baseMaskType);
     glUniform4fv(glGetUniformLocation(program, "baseMaskParameters"), 1, &state->baseMaskParameters.x);
     glUniform4fv(glGetUniformLocation(program, "baseMaskAxis"), 1, &state->baseMaskAxis.x);
-    _setTextureSampler(program, textureSlot++, "alphaMask", state->alphaMaskTextureID);
+    SetTextureSampler(program, textureSlot++, "alphaMask", state->alphaMaskTextureID);
     glUniform4fv(glGetUniformLocation(program, "alphaMaskScaleOffset"), 1, &state->alphaMaskScaleOffset.x);
-    _setTextureSampler(program, textureSlot++, "normalMap", state->normalMapTextureID);
+    SetTextureSampler(program, textureSlot++, "normalMap", state->normalMapTextureID);
     glUniform4fv(glGetUniformLocation(program, "normalMapScaleOffset"), 1, &state->normalMapScaleOffset.x);
-    _setTextureSampler(program, textureSlot++, "parallaxMap", state->parallaxMapTextureID);
+    SetTextureSampler(program, textureSlot++, "parallaxMap", state->parallaxMapTextureID);
     glUniform4fv(glGetUniformLocation(program, "parallaxMapScaleOffset"), 1, &state->parallaxMapScaleOffset.x);
-    _setTextureSampler(program, textureSlot++, "roughnessMap", state->roughnessMapTextureID);
+    SetTextureSampler(program, textureSlot++, "roughnessMap", state->roughnessMapTextureID);
     glUniform4fv(glGetUniformLocation(program, "roughnessMapScaleOffset"), 1, &state->roughnessMapScaleOffset.x);
 
     struct LayerUniforms {
@@ -323,14 +323,14 @@ void Avatar::_setMaterialState(GLuint program, const ovrAvatarMaterialState* sta
     glUniform1iv(glGetUniformLocation(program, "layerBlendModes"), OVR_AVATAR_MAX_MATERIAL_LAYER_COUNT, layerUniforms.layerBlendModes);
     glUniform1iv(glGetUniformLocation(program, "layerMaskTypes"), OVR_AVATAR_MAX_MATERIAL_LAYER_COUNT, layerUniforms.layerMaskTypes);
     glUniform4fv(glGetUniformLocation(program, "layerColors"), OVR_AVATAR_MAX_MATERIAL_LAYER_COUNT, (float*)layerUniforms.layerColors);
-    _setTextureSamplers(program, "layerSurfaces", OVR_AVATAR_MAX_MATERIAL_LAYER_COUNT, layerUniforms.layerSurfaces, layerUniforms.layerSurfaceIDs);
+    SetTextureSamplers(program, "layerSurfaces", OVR_AVATAR_MAX_MATERIAL_LAYER_COUNT, layerUniforms.layerSurfaces, layerUniforms.layerSurfaceIDs);
     glUniform4fv(glGetUniformLocation(program, "layerSurfaceScaleOffsets"), OVR_AVATAR_MAX_MATERIAL_LAYER_COUNT, (float*)layerUniforms.layerSurfaceScaleOffsets);
     glUniform4fv(glGetUniformLocation(program, "layerSampleParameters"), OVR_AVATAR_MAX_MATERIAL_LAYER_COUNT, (float*)layerUniforms.layerSampleParameters);
     glUniform4fv(glGetUniformLocation(program, "layerMaskParameters"), OVR_AVATAR_MAX_MATERIAL_LAYER_COUNT, (float*)layerUniforms.layerMaskParameters);
     glUniform4fv(glGetUniformLocation(program, "layerMaskAxes"), OVR_AVATAR_MAX_MATERIAL_LAYER_COUNT, (float*)layerUniforms.layerMaskAxes);
 }
 
-void Avatar::_renderSkinnedMeshPart(const ovrAvatarRenderPart_SkinnedMeshRender* mesh, uint32_t visibilityMask, const glm::mat4& world, const glm::mat4& view, const glm::mat4 proj, const glm::vec3& viewPos)
+void Avatar::RenderSkinnedMeshPart(const ovrAvatarRenderPart_SkinnedMeshRender* mesh, uint32_t visibilityMask, const glm::mat4& world, const glm::mat4& view, const glm::mat4 proj, const glm::vec3& viewPos)
 {
     // If this part isn't visible from the viewpoint we're rendering from, do nothing
     if ((mesh->visibilityMask & visibilityMask) == 0)
@@ -339,18 +339,18 @@ void Avatar::_renderSkinnedMeshPart(const ovrAvatarRenderPart_SkinnedMeshRender*
     }
 
     // Get the GL mesh data for this mesh's asset
-    MeshData* data = (MeshData*)_assetMap[mesh->meshAssetID];
+    MeshData* data = (MeshData*)m_asset_map[mesh->meshAssetID];
 
-    glUseProgram(_skinnedMeshProgram);
+    glUseProgram(m_skinned_mesh_program);
 
     // Apply the vertex state
-    _setMeshState(_skinnedMeshProgram, mesh->localTransform, data, mesh->skinnedPose, world, view, proj, viewPos);
+    SetMeshState(m_skinned_mesh_program, mesh->localTransform, data, mesh->skinnedPose, world, view, proj, viewPos);
 
     // Apply the material state
-    _setMaterialState(_skinnedMeshProgram, &mesh->materialState, nullptr);
+    SetMaterialState(m_skinned_mesh_program, &mesh->materialState, nullptr);
 
     // Draw the mesh
-    glBindVertexArray(data->vertexArray);
+    glBindVertexArray(data->m_vertex_array);
     glDepthFunc(GL_LESS);
 
     // Write to depth first for self-occlusion
@@ -358,25 +358,25 @@ void Avatar::_renderSkinnedMeshPart(const ovrAvatarRenderPart_SkinnedMeshRender*
     {
         glDepthMask(GL_TRUE);
         glColorMaski(0, GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-        glDrawElements(GL_TRIANGLES, (GLsizei)data->elementCount, GL_UNSIGNED_SHORT, 0);
+        glDrawElements(GL_TRIANGLES, (GLsizei)data->m_element_count, GL_UNSIGNED_SHORT, 0);
         glDepthFunc(GL_EQUAL);
     }
 
     // Render to color buffer
     glDepthMask(GL_FALSE);
     glColorMaski(0, GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    glDrawElements(GL_TRIANGLES, (GLsizei)data->elementCount, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLES, (GLsizei)data->m_element_count, GL_UNSIGNED_SHORT, 0);
     glBindVertexArray(0);
 }
 
-void Avatar::_setPBSState(GLuint program, const ovrAvatarAssetID albedoTextureID, const ovrAvatarAssetID surfaceTextureID)
+void Avatar::SetPBSState(GLuint program, const ovrAvatarAssetID albedoTextureID, const ovrAvatarAssetID surfaceTextureID)
 {
     int textureSlot = 0;
-    _setTextureSampler(program, textureSlot++, "albedo", albedoTextureID);
-    _setTextureSampler(program, textureSlot++, "surface", surfaceTextureID);
+    SetTextureSampler(program, textureSlot++, "albedo", albedoTextureID);
+    SetTextureSampler(program, textureSlot++, "surface", surfaceTextureID);
 }
 
-void Avatar::_renderSkinnedMeshPartPBS(const ovrAvatarRenderPart_SkinnedMeshRenderPBS* mesh, uint32_t visibilityMask, const glm::mat4& world, const glm::mat4& view, const glm::mat4 proj, const glm::vec3& viewPos)
+void Avatar::RenderSkinnedMeshPartPBS(const ovrAvatarRenderPart_SkinnedMeshRenderPBS* mesh, uint32_t visibilityMask, const glm::mat4& world, const glm::mat4& view, const glm::mat4 proj, const glm::vec3& viewPos)
 {
     // If this part isn't visible from the viewpoint we're rendering from, do nothing
     if ((mesh->visibilityMask & visibilityMask) == 0)
@@ -385,18 +385,18 @@ void Avatar::_renderSkinnedMeshPartPBS(const ovrAvatarRenderPart_SkinnedMeshRend
     }
 
     // Get the GL mesh data for this mesh's asset
-    MeshData* data = (MeshData*)_assetMap[mesh->meshAssetID];
+    MeshData* data = (MeshData*)m_asset_map[mesh->meshAssetID];
 
-    glUseProgram(_skinnedMeshPBSProgram);
+    glUseProgram(m_skinned_mesh_PBS_program);
 
     // Apply the vertex state
-    _setMeshState(_skinnedMeshPBSProgram, mesh->localTransform, data, mesh->skinnedPose, world, view, proj, viewPos);
+    SetMeshState(m_skinned_mesh_PBS_program, mesh->localTransform, data, mesh->skinnedPose, world, view, proj, viewPos);
 
     // Apply the material state
-    _setPBSState(_skinnedMeshPBSProgram, mesh->albedoTextureAssetID, mesh->surfaceTextureAssetID);
+    SetPBSState(m_skinned_mesh_PBS_program, mesh->albedoTextureAssetID, mesh->surfaceTextureAssetID);
 
     // Draw the mesh
-    glBindVertexArray(data->vertexArray);
+    glBindVertexArray(data->m_vertex_array);
     glDepthFunc(GL_LESS);
 
     // Write to depth first for self-occlusion
@@ -404,18 +404,18 @@ void Avatar::_renderSkinnedMeshPartPBS(const ovrAvatarRenderPart_SkinnedMeshRend
     {
         glDepthMask(GL_TRUE);
         glColorMaski(0, GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-        glDrawElements(GL_TRIANGLES, (GLsizei)data->elementCount, GL_UNSIGNED_SHORT, 0);
+        glDrawElements(GL_TRIANGLES, (GLsizei)data->m_element_count, GL_UNSIGNED_SHORT, 0);
         glDepthFunc(GL_EQUAL);
     }
     glDepthMask(GL_FALSE);
 
     // Draw the mesh
     glColorMaski(0, GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    glDrawElements(GL_TRIANGLES, (GLsizei)data->elementCount, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLES, (GLsizei)data->m_element_count, GL_UNSIGNED_SHORT, 0);
     glBindVertexArray(0);
 }
 
-void Avatar::_renderProjector(const ovrAvatarRenderPart_ProjectorRender* projector, ovrAvatar* avatar, uint32_t visibilityMask, const glm::mat4& world, const glm::mat4& view, const glm::mat4 proj, const glm::vec3& viewPos)
+void Avatar::RenderProjector(const ovrAvatarRenderPart_ProjectorRender* projector, ovrAvatar* avatar, uint32_t visibilityMask, const glm::mat4& world, const glm::mat4& view, const glm::mat4 proj, const glm::vec3& viewPos)
 {
 
     // Compute the mesh transform
@@ -440,34 +440,34 @@ void Avatar::_renderProjector(const ovrAvatarRenderPart_ProjectorRender* project
     _glmFromOvrAvatarTransform(component->transform, &meshWorld);
 
     // Get the GL mesh data for this mesh's asset
-    MeshData* data = (MeshData*)_assetMap[mesh->meshAssetID];
+    MeshData* data = (MeshData*)m_asset_map[mesh->meshAssetID];
 
-    glUseProgram(_skinnedMeshProgram);
+    glUseProgram(m_skinned_mesh_program);
 
     // Apply the vertex state
-    _setMeshState(_skinnedMeshProgram, mesh->localTransform, data, mesh->skinnedPose, meshWorld, view, proj, viewPos);
+    SetMeshState(m_skinned_mesh_program, mesh->localTransform, data, mesh->skinnedPose, meshWorld, view, proj, viewPos);
 
     // Apply the material state
-    _setMaterialState(_skinnedMeshProgram, &projector->materialState, &projectionInv);
+    SetMaterialState(m_skinned_mesh_program, &projector->materialState, &projectionInv);
 
     // Draw the mesh
-    glBindVertexArray(data->vertexArray);
+    glBindVertexArray(data->m_vertex_array);
     glDepthMask(GL_FALSE);
     glDepthFunc(GL_EQUAL);
-    glDrawElements(GL_TRIANGLES, (GLsizei)data->elementCount, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLES, (GLsizei)data->m_element_count, GL_UNSIGNED_SHORT, 0);
     glBindVertexArray(0);
 }
 
 void Avatar::Draw(const glm::mat4& view, const glm::mat4& proj, const glm::vec3& viewPos)
 {
     // If we have the avatar and have finished loading assets, render it
-    if (_avatar && !_loadingAssets)
+    if (m_avatar && !m_loading_assets)
     {
         // Traverse over all components on the avatar
-        uint32_t componentCount = ovrAvatarComponent_Count(_avatar);
+        uint32_t componentCount = ovrAvatarComponent_Count(m_avatar);
         for (uint32_t i = 0; i < componentCount; ++i)
         {
-            const ovrAvatarComponent* component = ovrAvatarComponent_Get(_avatar, i);
+            const ovrAvatarComponent* component = ovrAvatarComponent_Get(m_avatar, i);
 
             // Compute the transform for this componentfframeIndex
             glm::mat4 world;
@@ -481,24 +481,24 @@ void Avatar::Draw(const glm::mat4& view, const glm::mat4& proj, const glm::vec3&
                 switch (type)
                 {
                 case ovrAvatarRenderPartType_SkinnedMeshRender:
-                    _renderSkinnedMeshPart(ovrAvatarRenderPart_GetSkinnedMeshRender(renderPart), ovrAvatarVisibilityFlag_FirstPerson, world, view, proj, viewPos);
+                    RenderSkinnedMeshPart(ovrAvatarRenderPart_GetSkinnedMeshRender(renderPart), ovrAvatarVisibilityFlag_FirstPerson, world, view, proj, viewPos);
                     break;
                 case ovrAvatarRenderPartType_SkinnedMeshRenderPBS:
-                    _renderSkinnedMeshPartPBS(ovrAvatarRenderPart_GetSkinnedMeshRenderPBS(renderPart), ovrAvatarVisibilityFlag_FirstPerson, world, view, proj, viewPos);
+                    RenderSkinnedMeshPartPBS(ovrAvatarRenderPart_GetSkinnedMeshRenderPBS(renderPart), ovrAvatarVisibilityFlag_FirstPerson, world, view, proj, viewPos);
                     break;
                 case ovrAvatarRenderPartType_ProjectorRender:
-                    _renderProjector(ovrAvatarRenderPart_GetProjectorRender(renderPart), _avatar, ovrAvatarVisibilityFlag_FirstPerson, world, view, proj, viewPos);
+                    RenderProjector(ovrAvatarRenderPart_GetProjectorRender(renderPart), m_avatar, ovrAvatarVisibilityFlag_FirstPerson, world, view, proj, viewPos);
                     break;
                 }
             }
         }
     }
-    ++frameIndex;
+    ++m_frame_index;
 }
 
 void Avatar::Update(const float delta_time)
 {
-    _elapsedSeconds += _elapsedSeconds;
+    m_elapsed_seconds += m_elapsed_seconds;
 
     // Pump avatar messages
     while (ovrAvatarMessage* message = ovrAvatarMessage_Pop())
@@ -506,21 +506,22 @@ void Avatar::Update(const float delta_time)
         switch (ovrAvatarMessage_GetType(message))
         {
         case ovrAvatarMessageType_AvatarSpecification:
-            _handleAvatarSpecification(ovrAvatarMessage_GetAvatarSpecification(message));
+            HandleAvatarSpecification(ovrAvatarMessage_GetAvatarSpecification(message));
             break;
         case ovrAvatarMessageType_AssetLoaded:
-            _handleAssetLoaded(ovrAvatarMessage_GetAssetLoaded(message));
+            HandleAssetLoaded(ovrAvatarMessage_GetAssetLoaded(message));
             break;
         }
         ovrAvatarMessage_Free(message);
     }
 
-    if (_avatar)
+    if (m_avatar)
     {
         // Convert the OVR inputs into Avatar SDK inputs
         ovrInputState touchState;
-        ovr_GetInputState(ovr, ovrControllerType_Active, &touchState);
-        ovrTrackingState trackingState = ovr_GetTrackingState(ovr, 0.0, false);
+        ovr_GetInputState(m_ovr, ovrControllerType_Active, &touchState);
+        double seconds = ovr_GetPredictedDisplayTime(m_ovr, 0);
+        ovrTrackingState trackingState = ovr_GetTrackingState(m_ovr, seconds, false);
 
         glm::vec3 hmdP = _glmFromOvrVector(trackingState.HeadPose.ThePose.Position);
         glm::quat hmdQ = _glmFromOvrQuat(trackingState.HeadPose.ThePose.Orientation);
@@ -544,8 +545,8 @@ void Avatar::Update(const float delta_time)
         ovrAvatarHandInputState inputStateRight;
         _ovrAvatarHandInputStateFromOvr(right, touchState, ovrHand_Right, &inputStateRight);
 
-        ovrAvatarPose_UpdateBody(_avatar, hmd);
-        ovrAvatarPose_UpdateHands(_avatar, inputStateLeft, inputStateRight);
-        ovrAvatarPose_Finalize(_avatar, delta_time);
+        ovrAvatarPose_UpdateBody(m_avatar, hmd);
+        ovrAvatarPose_UpdateHands(m_avatar, inputStateLeft, inputStateRight);
+        ovrAvatarPose_Finalize(m_avatar, delta_time);
     }
 }

@@ -81,7 +81,7 @@ void VRDemoGame::HandleInput()
     }
 
     const auto& motion = mouse_state.RelativeMotion();
-    camera.ProcesMotion(motion.x, motion.y);
+    camera.RotateFromAxes(motion.x, motion.y);
 }
 
 void VRDemoGame::Update(const GameTime delta_time)
@@ -96,11 +96,11 @@ void VRDemoGame::Update(const GameTime delta_time)
 
 void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
 {
-    point_light.Position = camera.GetPosition();
-    flash_light.Position = camera.GetPosition();
+    point_light.Position = camera.Position();
+    flash_light.Position = camera.Position();
     flash_light.Direction = camera.GetFront();
 
-	rendering_engine.Begin(camera.GetViewVR(vr_system, eye), vr_system.GetProjectionMatrix(eye), camera.GetPosition(), shader);
+	rendering_engine.Begin(vr_system.GetViewFromEye(eye), vr_system.GetProjectionMatrix(eye), vr_system.EyePos(eye), shader);
     {
         shader.SetBool("blinn_phong", blinn_phong);
         shader.SetBool("lamps_active", lamps_active);
@@ -120,7 +120,7 @@ void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
 
 void VRDemoGame::RenderSkybox(const Rendering::Shader& shader, int eye)
 {
-    rendering_engine.Begin(camera.GetViewVR(vr_system, eye), vr_system.GetProjectionMatrix(eye), camera.GetPosition(), shader);
+    rendering_engine.Begin(vr_system.GetViewFromEye(eye), vr_system.GetProjectionMatrix(eye), vr_system.EyePos(eye), shader);
     {
         skybox.Draw(rendering_engine);
     }
@@ -136,7 +136,7 @@ void VRDemoGame::Render()
 		rendering_engine.ClearEyeBuffer(i);
 		RenderSkybox(skybox_shader, i);
 		RenderScene(blinn_shader, i);
-        vr_system.DrawAvatar(camera.GetViewVR(vr_system, i), vr_system.GetProjectionMatrix(i), vr_system.EyePos(i));
+        vr_system.DrawAvatar(vr_system.GetViewFromEye(i), vr_system.GetProjectionMatrix(i), vr_system.EyePos(i));
 		rendering_engine.Commit(i);
 	}
 	rendering_engine.EndRender();
@@ -147,7 +147,7 @@ void VRDemoGame::Render()
 
 void VRDemoGame::SetUpLighting()
 {
-    point_light.Position = camera.GetPosition();
+    point_light.Position = camera.Position();
     point_light.Ambient = glm::vec3(0.1, 0.1, 0.1);
     point_light.Diffuse = glm::vec3(1.0, 1.0, 0.5);
     point_light.Specular = glm::vec3(1.0, 1.0, 1.0);
@@ -163,7 +163,7 @@ void VRDemoGame::SetUpLighting()
     flash_light.Quadratic = 0.032;
     flash_light.CutOff = glm::cos(glm::radians(15.0f));
     flash_light.OuterCutOff = glm::cos(glm::radians(25.0f));
-    flash_light.Position = camera.GetPosition();
+    flash_light.Position = camera.Position();
     flash_light.Direction = camera.GetFront();
 
     directional_light.Direction = glm::vec3(-1.0, -1.0, -0.666);
