@@ -8,7 +8,7 @@ namespace Engine
     {
     public:
         virtual ~ISkybox() = default;
-        void Draw(const Rendering::IRenderingEngine& rendering_engine) override = 0;
+        void Draw(Rendering::IRenderingEngine& rendering_engine) override = 0;
         virtual unsigned GetVao() const = 0;
         virtual unsigned GetTexture() const = 0;
     };

@@ -31,11 +31,12 @@ namespace Engine
 
             void UpdateCameraVectors()
             {
-                glm::vec3 new_front;
+                /*glm::vec3 new_front;
                 new_front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
                 new_front.y = sin(glm::radians(pitch));
                 new_front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-                front = normalize(new_front);
+                front = normalize(new_front);*/
+				front.y = 0;
                 right = normalize(cross(front, world_up));
                 up = normalize(cross(right, front));
             }
@@ -79,9 +80,9 @@ namespace Engine
                 return lookAt(position, position + front, up);
             }
 
-			glm::mat4 GetViewVR(VRSystem& vr_system, int eye) const
+			glm::mat4 GetViewVR(VRSystem& vr_system, int eye)
 			{
-				return vr_system.GetViewFromEye(position, eye);
+				return vr_system.GetViewFromEye(position, eye, front);
 			}
 
             void MoveForward()
@@ -152,6 +153,10 @@ namespace Engine
             const glm::vec3& GetFront() const
             {
                 return front;
+            }
+			void UpdateFromHMD(VRSystem& vr_system)
+            {
+	            
             }
         };
     }

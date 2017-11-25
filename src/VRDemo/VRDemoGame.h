@@ -19,6 +19,7 @@ class VRDemoGame : public Game
 
     Rendering::Shader blinn_shader;
     Rendering::Shader skybox_shader;
+	Rendering::Shader textured_shader;
 
     Rendering::SpotLight flash_light;
     Rendering::DirectionalLight directional_light;

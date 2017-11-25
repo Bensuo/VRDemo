@@ -30,7 +30,7 @@ namespace Engine
 
             ~Skybox();
 
-            void Draw(const IRenderingEngine& rendering_engine) override;
+            void Draw(IRenderingEngine& rendering_engine) override;
 
             unsigned GetVao() const override { return vao; }
             unsigned GetTexture() const override { return texture; }

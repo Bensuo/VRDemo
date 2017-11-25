@@ -11,7 +11,7 @@ namespace Engine
         {
         public:
             virtual ~IRenderable() = default;
-            virtual void Draw(const IRenderingEngine& rendering_engine) = 0;
+            virtual void Draw(IRenderingEngine& rendering_engine) = 0;
         };
     }
 }

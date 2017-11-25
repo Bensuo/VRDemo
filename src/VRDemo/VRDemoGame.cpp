@@ -196,11 +196,11 @@ void VRDemoGame::SetUpLighting()
 
 VRDemoGame::VRDemoGame()
     : camera(glm::perspective(1.0f, 1280.0f / 720.0f, 0.1f, 100.0f),
-        glm::vec3(-0.6, 5, 5),
+        glm::vec3(-0.6, 0, 5),
         glm::vec3(0.0, 1.0, 0.0),
         -90.0f,
         -23.33f),
-    dining_room(content.LoadModel("res/models/breakfast_room.obj")),
+    dining_room(content.LoadModel("res/models/sponza2/sponza.obj")),
     skybox(content.LoadSkybox("res/textures/right.bmp",
         "res/textures/left.bmp",
         "res/textures/top.bmp",
@@ -209,10 +209,14 @@ VRDemoGame::VRDemoGame()
         "res/textures/front.bmp")),
     blinn_shader(content.LoadShader("res/shaders/blinn-phong.vs", "res/shaders/blinn-phong.fs")),
     skybox_shader(content.LoadShader("res/shaders/skybox.vs", "res/shaders/skybox.fs")),
+	textured_shader(content.LoadShader("res/shaders/textured.vs", "res/shaders/textured.fs")),
     lamps_active(true),
     blinn_phong(true),
     lighting_active(true),
     show_normal_mapping(true)
 {
     SetUpLighting();
+
+	//dining_room.GetTransform().SetScale(glm::vec3(0.015f));
+
 }

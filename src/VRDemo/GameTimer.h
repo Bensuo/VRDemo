@@ -19,7 +19,7 @@ namespace Engine
 
             unsigned frames = 0;
             unsigned frame_cap;
-            const unsigned max_framerate = 60;
+            const unsigned max_framerate = 90;
 
             std::chrono::duration<double> frame_counter;
             std::chrono::duration<double> delta_time;
