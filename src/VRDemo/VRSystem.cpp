@@ -166,22 +166,25 @@ void VRSystem::UpdateAvatar(const float delta_time)
     m_avatar.Update(delta_time);
 }
 
-VRInputState VRSystem::GetInputState()
+VRInputState VRSystem::GetInputState() const
 {
     VRControllerState left, right;
 
     ovrTrackingState trackState = ovr_GetTrackingState(session, 0, ovrTrue);
     ovrInputState inputState;
+    ovr_GetInputState(session, ovrControllerType_Touch, &inputState);
 
     auto pos_left = trackState.HandPoses[ovrHand_Left].ThePose.Position;
-    left.Transform.SetPosition(glm::vec3(pos_left.x, pos_left.y, pos_left.z));
+    left.Transform.SetPosition(_glmFromOvrVector(pos_left));
     auto rot_left = trackState.HandPoses[ovrHand_Left].ThePose.Orientation;
-    left.Transform.SetRotation(glm::quat(rot_left.x, rot_left.y, rot_left.z, rot_left.w));
+    left.Transform.SetRotation(_glmFromOvrQuat(rot_left));
+    left.ThumbstickAxis = _glmFromOvrVector(inputState.Thumbstick[ovrHand_Left]);
 
     auto pos_right = trackState.HandPoses[ovrHand_Right].ThePose.Position;
-    right.Transform.SetPosition(glm::vec3(pos_right.x, pos_right.y, pos_right.z));
+    right.Transform.SetPosition(_glmFromOvrVector(pos_right));
     auto rot_right = trackState.HandPoses[ovrHand_Right].ThePose.Orientation;
-    right.Transform.SetRotation(glm::quat(rot_right.x, rot_right.y, rot_right.z, rot_right.w));
+    right.Transform.SetRotation(_glmFromOvrQuat(rot_right));
+    right.ThumbstickAxis = _glmFromOvrVector(inputState.Thumbstick[ovrHand_Right]);
 
     return VRInputState(left, right);
 }

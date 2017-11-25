@@ -96,9 +96,9 @@ void VRDemoGame::Update(const GameTime delta_time)
 
 void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
 {
-    point_light.Position = camera.Position();
-    flash_light.Position = camera.Position();
-    flash_light.Direction = camera.GetFront();
+    point_light.Position = vr_system.EyePos(eye);
+    flash_light.Position = vr_system.GetInputState().GetLeft().Transform.GetPosition();
+    flash_light.Direction = vr_system.GetInputState().GetLeft().Transform.GetRotation() * glm::vec3(0, 0, -1);
 
 	rendering_engine.Begin(vr_system.GetViewFromEye(eye), vr_system.GetProjectionMatrix(eye), vr_system.EyePos(eye), shader);
     {

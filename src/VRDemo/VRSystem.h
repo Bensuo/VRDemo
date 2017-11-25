@@ -8,6 +8,7 @@
 struct VRControllerState
 {
     Transform3D Transform;
+    glm::vec2 ThumbstickAxis;
 };
 
 class VRInputState
@@ -19,8 +20,8 @@ public:
     VRInputState(const VRControllerState left, const VRControllerState right)
     : m_left(left), m_right(right) {}
 
-    const VRControllerState& GetLeft() { return m_left; }
-    const VRControllerState& GetRight() { return m_right; }
+    const VRControllerState& GetLeft() const { return m_left; }
+    const VRControllerState& GetRight() const { return m_right; }
 };
 
 class VRSystem
@@ -41,7 +42,7 @@ public:
     void DrawAvatar(const glm::mat4& view, const glm::mat4& proj, const glm::vec3& viewPos);
     void UpdateAvatar(const float delta_time);
 
-    VRInputState GetInputState();
+    VRInputState GetInputState() const;
 
     glm::vec3 EyePos(int eye);
 private:

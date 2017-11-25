@@ -37,7 +37,7 @@ bool Engine::Content::ModelFactory::LoadModel(std::string path)
 	std::cout << "Loading model: " << path << std::endl;
 
 	Assimp::Importer import;
-	const auto scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	const auto scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenNormals);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{

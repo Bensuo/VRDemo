@@ -16,15 +16,15 @@ public:
 	{
 		
 	}
-	const glm::vec3& GetPosition()
+	const glm::vec3& GetPosition() const
 	{
 		return m_position;
 	}
-	const glm::vec3& GetScale()
+	const glm::vec3& GetScale() const
 	{
 		return m_scale;
 	}
-	const glm::quat& GetRotation()
+	const glm::quat& GetRotation() const
 	{
 		return m_rotation;
 	}

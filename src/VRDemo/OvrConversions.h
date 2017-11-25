@@ -15,6 +15,12 @@ static glm::vec3 _glmFromOvrVector(const ovrVector3f& ovrVector)
     return glm::vec3(ovrVector.x, ovrVector.y, ovrVector.z);
 }
 
+static glm::vec2 _glmFromOvrVector(const ovrVector2f& ovrVector)
+{
+    return glm::vec2(ovrVector.x, ovrVector.y);
+}
+
+
 static glm::quat _glmFromOvrQuat(const ovrQuatf& ovrQuat)
 {
     return glm::quat(ovrQuat.w, ovrQuat.x, ovrQuat.y, ovrQuat.z);
