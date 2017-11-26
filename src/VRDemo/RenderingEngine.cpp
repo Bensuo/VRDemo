@@ -81,21 +81,7 @@ namespace Engine
 
                 std::stringstream ss;
                 const auto name = mesh->GetTextures()[i].Type;
-                if (name == "texture_diffuse")
-                {
-                    ss << diffuse_nr++;
-                }
-                else if (name == "texture_specular")
-                {
-                    ss << specular_nr++;
-                }
-                else if (name == "texture_normals")
-                {
-                    ss << normal_nr++;
-                    shader.SetBool("normal_mapped", true);
-                }
-                const auto number = ss.str();
-                shader.SetUint((name + number).c_str(), i);
+                shader.SetUint(name.c_str(), i);
                 glBindTexture(GL_TEXTURE_2D, mesh->GetTextures()[i].Id);
             }
 

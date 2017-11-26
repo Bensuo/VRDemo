@@ -117,7 +117,8 @@ void VRSystem::BeginFrame()
 void VRSystem::EndFrame()
 {
 	ovrLayerHeader* layers = &layer.Header;
-	ovrResult result = ovr_EndFrame(session, 0, nullptr, &layers, 1);
+    
+    ovrResult result = ovr_EndFrame(session, 0, nullptr, &layers, 1);
 
 	//frameIndex++;
 }

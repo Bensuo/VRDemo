@@ -81,22 +81,22 @@ namespace Engine
 
             void MoveForward()
             {
-                movement += front;
+                movement -= front;
             }
 
             void MoveBackward()
             {
-                movement -= front;
+                movement += front;
             }
 
             void MoveLeft()
             {
-                movement -= right;
+                movement += right;
             }
 
             void MoveRight()
             {
-                movement += right;
+                movement -= right;
             }
 
             glm::quat Yaw()

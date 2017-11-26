@@ -160,7 +160,6 @@ void VRDemoGame::Render()
 	}
 	rendering_engine.EndRender();
 
-
     Game::Render();
 }
 
@@ -231,7 +230,7 @@ VRDemoGame::VRDemoGame()
         "res/textures/bottom.bmp",
         "res/textures/back.bmp",
         "res/textures/front.bmp")),
-    blinn_shader(content.LoadShader("res/shaders/blinn-phong.vs", "res/shaders/blinn-phong.fs")),
+    blinn_shader(content.LoadShader("res/shaders/parallax-blinn-2.vs", "res/shaders/parallax-blinn-2.fs")),
     skybox_shader(content.LoadShader("res/shaders/skybox.vs", "res/shaders/skybox.fs")),
     test_hands(content.LoadModel("res/models/cube.obj")),
     lamps_active(true),
