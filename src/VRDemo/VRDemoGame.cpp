@@ -101,7 +101,8 @@ void VRDemoGame::Update(const GameTime delta_time)
 void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
 {
     // move oculus data into our virtual camera's space
-    auto new_view = vr_system.GetViewFromEye(eye) * view;
+    auto new_view = glm::translate(view, vr_system.EyePos(eye));
+    new_view = vr_system.GetViewFromEye(eye) * view;
     auto eye_pos = glm::vec3(glm::vec4(vr_system.EyePos(eye), 1) * view) - camera.Position();
     auto hand_left_pos = glm::vec3(glm::vec4(vr_system.GetInputState().GetLeft().Transform.GetPosition(), 1) * view) - camera.Position();
     auto hand_left_dir = glm::vec3(glm::vec4(vr_system.GetInputState().GetLeft().Transform.GetRotation() * glm::vec3(0, 0, -1), 0) * view);
@@ -133,7 +134,8 @@ void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
 
 void VRDemoGame::RenderSkybox(const Rendering::Shader& shader, int eye)
 {
-    auto new_view = vr_system.GetViewFromEye(eye) * view;
+    auto new_view = glm::translate(view, vr_system.EyePos(eye));
+    new_view = vr_system.GetViewFromEye(eye) * view;
     auto eye_pos = glm::vec3(glm::vec4(vr_system.EyePos(eye), 1) * view);
 
     rendering_engine.Begin(new_view, vr_system.GetProjectionMatrix(eye), eye_pos, shader);
