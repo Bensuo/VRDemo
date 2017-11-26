@@ -156,6 +156,11 @@ glm::mat4 VRSystem::GetProjectionMatrix(int eye)
     );
 }
 
+glm::vec3 VRSystem::GetOrigin()
+{
+    return _glmFromOvrVector(hmdState.HeadPose.ThePose.Position);
+}
+
 glm::vec3 VRSystem::GetFront()
 {
     auto orient = _glmFromOvrQuat(hmdState.HeadPose.ThePose.Orientation);

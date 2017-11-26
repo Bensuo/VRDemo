@@ -33,6 +33,8 @@ class VRDemoGame : public Game
     Input::Button flash_light_active;
     Input::Button lighting_active;
     Input::Button show_normal_mapping;
+
+    glm::mat4 view;
 	
     /**
      * \brief Render a skybox.

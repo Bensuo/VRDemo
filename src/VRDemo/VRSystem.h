@@ -39,6 +39,8 @@ public:
 	glm::mat4 GetViewFromEye(int eye);
 	glm::mat4 GetProjectionMatrix(int eye);
 
+    glm::vec3 GetOrigin();
+
     glm::vec3 GetFront();
 
     void DrawAvatar(const glm::mat4& view, const glm::mat4& proj, const glm::vec3& viewPos);

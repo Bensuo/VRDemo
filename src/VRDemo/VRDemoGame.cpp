@@ -10,6 +10,7 @@ void VRDemoGame::HandleInput()
     const auto& mouse_state = Input::Mouse::GetState();
     const auto vr_input_state = vr_system.GetInputState();
     const auto& left_axis = vr_input_state.GetLeft().ThumbstickAxis;
+    const auto& right_axis = vr_input_state.GetRight().ThumbstickAxis;
 
     if (keyboard_state.IsKeyDown(Key_Escape))
     {
@@ -81,9 +82,8 @@ void VRDemoGame::HandleInput()
         show_normal_mapping.Up();
     }
 
-    camera.SetFront(vr_system.GetFront());
     const auto& motion = mouse_state.RelativeMotion();
-    camera.RotateFromAxes(motion.x, motion.y);
+    camera.RotateFromAxes(right_axis.x, right_axis.y);
 
     camera.MoveFromAxes(left_axis.x, left_axis.y);
 }
@@ -100,14 +100,20 @@ void VRDemoGame::Update(const GameTime delta_time)
 
 void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
 {
-    point_light.Position = vr_system.EyePos(eye);
-    flash_light.Position = vr_system.GetInputState().GetLeft().Transform.GetPosition() - camera.Position();
-    flash_light.Direction = vr_system.GetInputState().GetLeft().Transform.GetRotation() * glm::vec3(0, 0, -1);
+    // move oculus data into our virtual camera's space
+    auto new_view = vr_system.GetViewFromEye(eye) * view;
+    auto eye_pos = glm::vec3(glm::vec4(vr_system.EyePos(eye), 1) * view);
+    auto hand_left_pos = glm::vec3(glm::vec4(vr_system.GetInputState().GetLeft().Transform.GetPosition(), 1) * view) - camera.Position();
+    auto hand_left_dir = glm::vec3(glm::vec4(vr_system.GetInputState().GetLeft().Transform.GetRotation() * glm::vec3(0, 0, -1), 0) * view);
+    auto hand_right_pos = glm::vec3(glm::vec4(vr_system.GetInputState().GetRight().Transform.GetPosition(), 1) * view) - camera.Position();
 
-    auto view = vr_system.GetViewFromEye(eye);
-    view = glm::translate(view, camera.Position());
+    camera.SetFront(glm::vec3(glm::vec4(vr_system.GetFront(), 0) * view));
 
-	rendering_engine.Begin(view, vr_system.GetProjectionMatrix(eye), vr_system.EyePos(eye), shader);
+    point_light.Position = eye_pos;
+    flash_light.Position = hand_left_pos;
+    flash_light.Direction = hand_left_dir;
+
+	rendering_engine.Begin(new_view, vr_system.GetProjectionMatrix(eye), eye_pos, shader);
     {
         shader.SetBool("blinn_phong", blinn_phong);
         shader.SetBool("lamps_active", lamps_active);
@@ -127,7 +133,10 @@ void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
 
 void VRDemoGame::RenderSkybox(const Rendering::Shader& shader, int eye)
 {
-    rendering_engine.Begin(vr_system.GetViewFromEye(eye), vr_system.GetProjectionMatrix(eye), vr_system.EyePos(eye), shader);
+    auto new_view = vr_system.GetViewFromEye(eye) * view;
+    auto eye_pos = glm::vec3(glm::vec4(vr_system.EyePos(eye), 1) * view);
+
+    rendering_engine.Begin(new_view, vr_system.GetProjectionMatrix(eye), eye_pos, shader);
     {
         skybox.Draw(rendering_engine);
     }
@@ -136,6 +145,9 @@ void VRDemoGame::RenderSkybox(const Rendering::Shader& shader, int eye)
 
 void VRDemoGame::Render()
 {
+    view = glm::mat4_cast(camera.Yaw());
+    view = glm::translate(view, camera.Position());
+
     rendering_engine.ClearScreen();
 	rendering_engine.BeginRender();
 	for (int i = 0; i < 2; ++i)

@@ -99,6 +99,11 @@ namespace Engine
                 movement += right;
             }
 
+            glm::quat Yaw()
+            {
+                return glm::angleAxis(yaw, glm::vec3(0, 1, 0));
+            }
+
             void Update(const float delta_time)
             {
                 const auto velocity = movement * delta_time;
@@ -121,8 +126,8 @@ namespace Engine
 
             void RotateFromAxes(float xoffset, float yoffset, const bool constrain_pitch = true)
             {
-                yaw += xoffset * 3;
-                pitch -= yoffset * 3;
+                yaw += xoffset * 1 / 60;
+                pitch -= yoffset * 1 / 60;
 
                 if (constrain_pitch)
                 {
