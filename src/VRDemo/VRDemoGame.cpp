@@ -201,7 +201,7 @@ VRDemoGame::VRDemoGame()
 		glm::vec3(0.0, 1.0, 0.0),
 		-90.0f,
 		-23.33f),
-	dining_room(content.LoadModel("res/models/testcube/testcube.obj")),
+	dining_room(content.LoadModel("res/models/sponza2/sponza.obj")),
 	//bb8(content.LoadModel("res/models/BB8 New/bb8.fbx")),
 	skybox(content.LoadSkybox("res/textures/right.bmp",
 		"res/textures/left.bmp",
