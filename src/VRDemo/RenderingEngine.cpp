@@ -78,10 +78,14 @@ namespace Engine
             for (GLuint i = 0; i < mesh->GetTextures().size(); i++)
             {
                 glActiveTexture(GL_TEXTURE0 + i); // Active proper texture unit before binding
-
-                std::stringstream ss;
                 const auto name = mesh->GetTextures()[i].Type;
                 shader.SetUint(name.c_str(), i);
+
+                if (name == "normalMap")
+                {
+                    shader.SetBool("normal_mapped", true);
+                }
+
                 glBindTexture(GL_TEXTURE_2D, mesh->GetTextures()[i].Id);
             }
 
