@@ -50,6 +50,12 @@ namespace Engine
 			vr_system.ClearEyeBuffer(eye);
         }
 
+        void RenderingEngine::Begin(const Shader& shader)
+        {
+            this->shader = shader;
+            PushMatrix();
+        }
+
 	    void RenderingEngine::Begin(const glm::mat4& view, const glm::mat4& perspective, const glm::vec3& position, const Shader& shader)
         {
             this->shader = shader;

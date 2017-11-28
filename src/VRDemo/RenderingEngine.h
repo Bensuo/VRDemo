@@ -30,6 +30,8 @@ namespace Engine
             void ClearScreen() const override;
 			void ClearEyeBuffer(int eye) override;
 
+            void Begin(const Shader & shader);
+
             void Draw(const Mesh* mesh) const override;
             void Draw(const Skybox* skybox) const override;
 

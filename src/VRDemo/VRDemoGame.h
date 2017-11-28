@@ -18,9 +18,11 @@ class VRDemoGame : public Game
     Rendering::Model test_hands;
     Rendering::Skybox skybox;
 
+    Rendering::Shader shadow_shader;
     Rendering::Shader blinn_shader;
     Rendering::Shader skybox_shader;
 	Rendering::Shader textured_shader;
+    Rendering::Shader depth_shader;
 
     Rendering::SpotLight flash_light;
     Rendering::DirectionalLight directional_light;
@@ -63,6 +65,8 @@ class VRDemoGame : public Game
      */
 
     void Update(const GameTime delta_time) override;
+
+    void RenderScene(const Rendering::Shader & shader);
 
     /**
      * \brief Render the scene.
