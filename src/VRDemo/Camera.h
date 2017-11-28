@@ -3,6 +3,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/rotate_vector.hpp> 
+#include "RigidBody.hpp"
+#include "RigidBodyBox.hpp"
 
 namespace Engine
 {
@@ -27,7 +29,7 @@ namespace Engine
             float movement_speed;
             float mouse_sensitivity;
             float zoom;
-
+			
             void UpdateCameraVectors()
             {
                 front = normalize(front);
@@ -36,6 +38,8 @@ namespace Engine
             }
 
         public:
+			Transform3D* transform;
+			RigidBody* rigid_body;
             const glm::mat4& Projection() const
             {
                 return projection;
@@ -43,7 +47,8 @@ namespace Engine
 
             const glm::vec3& Position() const
             {
-                return position;
+
+                return transform->GetPosition();
             }
 
             void SetFront(const glm::vec3& front)
@@ -58,7 +63,7 @@ namespace Engine
                 const float yaw = 90.0f,
                 const float pitch = 23.33f,
                 const float mouse_sensitivity = 0.1f,
-                const float movement_speed = 20.0f,
+                const float movement_speed = 5.0f,
                 const float zoom = 45.0f)
                 : position(position),
                 front(glm::vec3(0)),
@@ -72,6 +77,11 @@ namespace Engine
                 zoom(zoom)
             {
                 UpdateCameraVectors();
+				this->position.y = 20;
+				transform = new Transform3D(this->position);
+				rigid_body = new RigidBodyBox(glm::vec3(1.0f), 1.0f,transform, "camera");
+				rigid_body->SetRestitution(1.0f);
+				//rigid_body->m_rigid_body->setAngularFactor(btVector3(0.0f,0.0f, 0.0f));
             }
 
             glm::mat4 View() const
@@ -81,22 +91,31 @@ namespace Engine
 
             void MoveForward()
             {
-                movement -= front;
+                //movement -= front;
+				auto new_front = front * movement_speed;
+				rigid_body->m_rigid_body->activate();
+				rigid_body->ApplyCentralForce(new_front.x, new_front.y, new_front.z);
             }
 
             void MoveBackward()
             {
-                movement += front;
+				auto new_front = -front * movement_speed;
+				rigid_body->m_rigid_body->activate();
+				rigid_body->ApplyCentralForce(new_front.x, new_front.y, new_front.z);
             }
 
             void MoveLeft()
             {
-                movement += right;
+				auto new_right = -right * movement_speed;
+				rigid_body->m_rigid_body->activate();
+				rigid_body->ApplyCentralForce(new_right.x, new_right.y, new_right.z);
             }
 
             void MoveRight()
             {
-                movement -= right;
+				auto new_right = right * movement_speed;
+				rigid_body->m_rigid_body->activate();
+				rigid_body->ApplyCentralForce(new_right.x, new_right.y, new_right.z);
             }
 
             glm::quat Yaw()

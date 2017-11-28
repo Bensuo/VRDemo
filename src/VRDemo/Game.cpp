@@ -16,6 +16,7 @@ namespace Engine
             {
                 game_timer.Update();
                 Update(game_timer.DeltaTime());
+				
             }
 
             //render processed frame
@@ -33,6 +34,7 @@ namespace Engine
 
     void Game::Update(const GameTime delta_time)
     {
+		physics_engine.StepSimulation(delta_time);
         window.Update();
     }
 
@@ -56,13 +58,15 @@ namespace Engine
             Quit();
         });
 		vr_system.Init();
+		
     }
 
     int Game::Run()
     {
         //start game & run game loop
         GameLoop();
-
+		physics_engine.SetMaxSubsteps(10);
+		physics_engine.SetGravity(0, -10.0f, 0);
         return 0;
     }
 }

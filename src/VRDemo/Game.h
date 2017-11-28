@@ -6,6 +6,7 @@
 #include "ContentLoader.h"
 #include "RenderingEngine.h"
 #include <OVR_CAPI_GL.h>
+#include "PhysicsEngine.hpp"
 namespace Engine
 {
     /**
@@ -25,7 +26,7 @@ namespace Engine
 		VRSystem vr_system;
         Rendering::RenderingEngine rendering_engine;
         Time::GameTimer game_timer;
-		
+		Physics::PhysicsEngine physics_engine;
         /**
          * \brief Exit the main game loop
          */
