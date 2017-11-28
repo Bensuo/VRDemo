@@ -5,6 +5,7 @@
 #include <glm/gtx/rotate_vector.hpp> 
 #include "RigidBody.hpp"
 #include "RigidBodyBox.hpp"
+#include "RigidBodySphere.hpp"
 
 namespace Engine
 {
@@ -63,7 +64,7 @@ namespace Engine
                 const float yaw = 90.0f,
                 const float pitch = 23.33f,
                 const float mouse_sensitivity = 0.1f,
-                const float movement_speed = 5.0f,
+                const float movement_speed = 2000.0f,
                 const float zoom = 45.0f)
                 : position(position),
                 front(glm::vec3(0)),
@@ -77,11 +78,12 @@ namespace Engine
                 zoom(zoom)
             {
                 UpdateCameraVectors();
-				this->position.y = 20;
+				this->position.y = 3;
 				transform = new Transform3D(this->position);
-				rigid_body = new RigidBodyBox(glm::vec3(1.0f), 1.0f,transform, "camera");
+				rigid_body = new RigidBodySphere(0.5f, 100.0f,transform);
 				rigid_body->SetRestitution(1.0f);
 				//rigid_body->m_rigid_body->setAngularFactor(btVector3(0.0f,0.0f, 0.0f));
+				rigid_body->m_rigid_body->setDamping(0.99f, 0.99f);
             }
 
             glm::mat4 View() const

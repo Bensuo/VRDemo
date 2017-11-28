@@ -278,6 +278,21 @@ VRDemoGame::VRDemoGame()
 		game_objects[2].rigid_body->SetRestitution(0.25f);
 		physics_engine.AddRigidBody(*game_objects[2].rigid_body);
 		physics_engine.AddRigidBody(*camera.rigid_body);
-
+		physics_engine.SetInternalTickCallback(PhysicsCallback, static_cast<void*>(this));
 	//dining_room.GetTransform().SetScale(glm::vec3(0.015f));
+}
+
+void VRDemoGame::PhysicsCallback(btDynamicsWorld *world, btScalar timestep)
+{
+	VRDemoGame* game = static_cast<VRDemoGame*>(world->getWorldUserInfo());
+	//cap the camera speed
+	auto vel = game->camera.rigid_body->GetLinearVelocity();
+	btVector3 velocity = btVector3(vel.x, vel.y, vel.z);
+	glm::vec2 v2{ velocity.getX(), velocity.getZ() };
+	btScalar speed = glm::length(v2);
+	if (speed > 5.0f)
+	{
+		v2 *= 5.0f / speed;
+		game->camera.rigid_body->SetLinearVelocity(v2.x, velocity.getY(), v2.y);
+	}
 }

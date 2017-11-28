@@ -15,6 +15,7 @@ namespace Physics
 		void StepSimulation(float timeStep);
 		void RemoveRigidBody(RigidBody& rigid_body);
 		void SetMaxSubsteps(int val);
+		void SetInternalTickCallback(btInternalTickCallback cb, void *worldUserInfo);
 	private:
 		btBroadphaseInterface* m_broadphase;
 		btDefaultCollisionConfiguration* m_collision_configuration;

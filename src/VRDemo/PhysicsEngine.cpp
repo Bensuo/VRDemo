@@ -9,6 +9,7 @@ Physics::PhysicsEngine::PhysicsEngine()
 	m_dynamics_world = new btDiscreteDynamicsWorld(m_dispatcher, m_broadphase, m_solver, m_collision_configuration);
 	//Setting a sensible default value for max_substeps
 	m_max_substeps = 7;
+
 }
 Physics::PhysicsEngine::~PhysicsEngine()
 {
@@ -49,4 +50,9 @@ void Physics::PhysicsEngine::RemoveRigidBody(RigidBody &rigid_body)
 void Physics::PhysicsEngine::SetMaxSubsteps(int val)
 {
 	m_max_substeps = val;
+}
+
+void Physics::PhysicsEngine::SetInternalTickCallback(btInternalTickCallback cb, void* worldUserInfo)
+{
+	m_dynamics_world->setInternalTickCallback(cb, worldUserInfo);
 }

@@ -75,6 +75,9 @@ class VRDemoGame : public Game
      * \param shader The shader you want to use while rendering the scene.
      */
     void RenderScene(const Rendering::Shader& shader, int eye);
+
+	//Physics simulation tick callback
+	static void PhysicsCallback(btDynamicsWorld *world, btScalar timestep);
 public:
     /**
      * \brief Load the game's content & set up the scene.
