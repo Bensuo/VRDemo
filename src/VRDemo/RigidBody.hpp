@@ -38,6 +38,14 @@ public:
 	 {
 		m_rigid_body->setDamping(lin, angular);
 	 }
+	void SetUserPointer(void* userPointer)
+	 {
+		m_rigid_body->setUserPointer(userPointer);
+	 }
+	void Activate()
+	 {
+		m_rigid_body->activate();
+	 }
 protected:
 	//Protected constructor to prevent instantiation except by derived classes
 	RigidBody(){}

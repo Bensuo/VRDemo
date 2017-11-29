@@ -38,11 +38,8 @@ class VRDemoGame : public Game
 	Rendering::Shader textured_shader;
 	std::vector<Rendering::Model> cubes;
 	std::vector<RigidBodyBox*> cubes_bodies;
-	KinematicSphere* hand_left;
-	Transform3D* hand_left_transform;
-	GameObject hand_debug;
-	KinematicSphere* hand_right;
-	Transform3D* hand_right_transform;
+	GameObject* hand_left;
+	GameObject* hand_right;
     Rendering::SpotLight flash_light;
     Rendering::DirectionalLight directional_light;
     Rendering::PointLight point_light;

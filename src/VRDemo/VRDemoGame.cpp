@@ -88,8 +88,9 @@ void VRDemoGame::HandleInput()
     camera.RotateFromAxes(right_axis.x, right_axis.y);
 
     camera.MoveFromAxes(left_axis.x, left_axis.y);
-	hand_left_transform->SetPosition(glm::vec3( glm::vec4(vr_input_state.GetLeft().Transform.GetPosition(), 1)*camera.Yaw() ) + camera.Position());
-	hand_right_transform->SetPosition(glm::vec3(glm::vec4(vr_input_state.GetRight().Transform.GetPosition(), 1)*camera.Yaw()) + camera.Position());
+	hand_left->transform->SetPosition(glm::vec3( glm::vec4(vr_input_state.GetLeft().Transform.GetPosition(), 1)*camera.Yaw() ) + camera.Position());
+	hand_left->rigid_body->Activate();
+	hand_right->transform->SetPosition(glm::vec3(glm::vec4(vr_input_state.GetRight().Transform.GetPosition(), 1)*camera.Yaw()) + camera.Position());
 }
 
 void VRDemoGame::Update(const GameTime delta_time)
@@ -135,7 +136,7 @@ void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
 	    {
 			object->Draw(rendering_engine);
 	    }
-		hand_debug.Draw(rendering_engine);
+
     }
     rendering_engine.End();
 }
@@ -265,32 +266,40 @@ VRDemoGame::VRDemoGame()
 		//GameObject& gameObject = game_objects[i];
 		gameObject->model = content.LoadModel("res/models/testcube/testsphere.obj");
 		gameObject->transform->SetPosition(glm::vec3(0.0f, 100, 0));
-		gameObject->transform->SetScale(glm::vec3(1.0f));
+		gameObject->transform->SetScale(glm::vec3(0.5f + (0.5f/50)*i));
+		gameObject->id = "sphere";
+		gameObject->is_destructable = i % 2;
 		gameObject->rigid_body = new RigidBodySphere(1.0f, 2.0f, gameObject->transform);
-		gameObject->rigid_body->SetRestitution(0.5f);
+		gameObject->rigid_body->SetRestitution(0.7f);
 		gameObject->rigid_body->SetDamping(0.1f, 0.2f);
+		gameObject->rigid_body->SetUserPointer(static_cast<void*>(gameObject));
 		physics_engine.AddRigidBody(*(gameObject->rigid_body), COL_OBJECTS, COL_SCENE | COL_OBJECTS | COL_HANDS);
 		game_objects.push_back(gameObject);
 	}
 	physics_engine.SetInternalTickCallback(PhysicsCallback, static_cast<void*>(this));
-	hand_left_transform = new Transform3D();
-	hand_left_transform->SetPosition(camera.Yaw() * vr_system.GetInputState().GetLeft().Transform.GetPosition() + camera.Position());
-	hand_left_transform->SetScale(glm::vec3(0.1f));
-	hand_left = new KinematicSphere(1.0f,hand_left_transform);
+	hand_left = new GameObject();
+	hand_left->id = "hands";
+	hand_left->transform->SetPosition(camera.Yaw() * vr_system.GetInputState().GetLeft().Transform.GetPosition() + camera.Position());
+	hand_left->transform->SetScale(glm::vec3(0.1f));
+	hand_left->rigid_body = new KinematicSphere(1.0f,hand_left->transform);
+	hand_left->rigid_body->SetUserPointer(static_cast<void*>(hand_left));
 
-	physics_engine.AddRigidBody(*hand_left, COL_HANDS, COL_OBJECTS);
-	hand_right_transform = new Transform3D();
-	hand_right_transform->SetPosition(camera.Yaw() * vr_system.GetInputState().GetRight().Transform.GetPosition() + camera.Position());
-	hand_right_transform->SetScale(glm::vec3(0.1f));
-	hand_right = new KinematicSphere(1.0f, hand_right_transform);
+	physics_engine.AddRigidBody(*hand_left->rigid_body, COL_HANDS, COL_OBJECTS);
+	hand_right = new GameObject();
+	hand_right->id = "hands";
+	hand_right->transform->SetPosition(camera.Yaw() * vr_system.GetInputState().GetLeft().Transform.GetPosition() + camera.Position());
+	hand_right->transform->SetScale(glm::vec3(0.1f));
+	hand_right->rigid_body = new KinematicSphere(1.0f, hand_right->transform);
+	hand_right->rigid_body->SetUserPointer(static_cast<void*>(hand_right));
 
-	physics_engine.AddRigidBody(*hand_right, COL_HANDS, COL_OBJECTS);
+	physics_engine.AddRigidBody(*hand_right->rigid_body, COL_HANDS, COL_OBJECTS);
 
 		//dining_room.GetTransform().SetScale(glm::vec3(0.015f));
 }
 
 void VRDemoGame::PhysicsCallback(btDynamicsWorld *world, btScalar timestep)
 {
+	//Limit the camera speed
 	VRDemoGame* game = static_cast<VRDemoGame*>(world->getWorldUserInfo());
 	//cap the camera speed
 	auto vel = game->camera.rigid_body->GetLinearVelocity();
@@ -302,4 +311,47 @@ void VRDemoGame::PhysicsCallback(btDynamicsWorld *world, btScalar timestep)
 		v2 *= 5.0f / speed;
 		game->camera.rigid_body->SetLinearVelocity(v2.x, velocity.getY(), v2.y);
 	}
+
+	//Find contacts between hands and spheres and delete as appropriate
+	std::vector<GameObject*> for_deletion;
+	int numManifolds = world->getDispatcher()->getNumManifolds();
+	for (int i = 0; i < numManifolds; i++)
+	{
+		btPersistentManifold* contactManifold = world->getDispatcher()->getManifoldByIndexInternal(i);
+		const btCollisionObject* obA = contactManifold->getBody0();
+		const btCollisionObject* obB = contactManifold->getBody1();
+		GameObject* ob_a = static_cast<GameObject*>(obA->getUserPointer());
+		GameObject* ob_b = static_cast<GameObject*>(obB->getUserPointer());
+		int numContacts = contactManifold->getNumContacts();
+		for (int j = 0; j < numContacts; j++)
+		{
+			btManifoldPoint& pt = contactManifold->getContactPoint(j);
+			if (pt.getDistance() < 0.f)
+			{
+				if (ob_a && ob_b)
+				{
+					if (ob_b->id == "hands" && ob_a->id == "sphere" && ob_a->is_destructable)
+					{
+						for_deletion.push_back(ob_a);
+					}
+				}
+			}
+		}
+
+	}
+	for (int i = 0; i < for_deletion.size(); ++i)
+	{
+		
+		for (int j = game->game_objects.size()-1; j > 0;  --j)
+		{
+			if (game->game_objects[j] == for_deletion[i])
+			{
+				world->removeRigidBody(for_deletion[i]->rigid_body->m_rigid_body);
+				delete game->game_objects[j];
+				game->game_objects.erase(game->game_objects.begin() + j);
+				break;
+			}
+		}
+	}
+
 }

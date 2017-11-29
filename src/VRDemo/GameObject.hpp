@@ -15,6 +15,7 @@ public:
 	{
 		transform = new Transform3D();
 	}
+
 	~GameObject()
 	{
 		delete transform;
@@ -32,6 +33,8 @@ public:
 	Engine::Rendering::Model model;
 	Transform3D* transform;
 	RigidBody* rigid_body;
+	std::string id;
+	bool is_destructable = false;
 private:
 	
 };
