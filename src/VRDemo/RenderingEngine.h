@@ -3,7 +3,6 @@
 #include <stack>
 #include "IRenderingEngine.h"
 #include "Shader.h"
-#include "Camera.h"
 #include "Light.h"
 #include <memory>
 #include <vector>
@@ -23,7 +22,7 @@ namespace Engine
             Shader shader;
             std::string version;
         public:
-            RenderingEngine(VRSystem& system);
+            RenderingEngine(std::shared_ptr<VRSystem> system);
 
             const std::string& ApiVersion() override;
 
@@ -59,7 +58,7 @@ namespace Engine
             glm::mat4 view;
 
 			//VR
-			VRSystem& vr_system;
+            std::shared_ptr<VRSystem> vr_system;
         };
     }
 }

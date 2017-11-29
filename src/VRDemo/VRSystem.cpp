@@ -201,9 +201,25 @@ VRInputState VRSystem::GetInputState() const
     return VRInputState(left, right);
 }
 
-glm::vec3 VRSystem::EyePos(int eye)
+glm::vec3 VRSystem::GetEyePos(int eye)
 {
     return _glmFromOvrVector(layer.RenderPose[eye].Position);
+}
+
+Transform3D VRSystem::GetHMDTransform()
+{
+    Transform3D result;
+    result.SetPosition(_glmFromOvrVector(hmdState.HeadPose.ThePose.Position));
+    result.SetRotation(_glmFromOvrQuat(hmdState.HeadPose.ThePose.Orientation));
+    return result;
+}
+
+Transform3D VRSystem::GetEyeTransform(int eye)
+{
+    Transform3D result;
+    result.SetPosition(_glmFromOvrVector(layer.RenderPose[eye].Position));
+    result.SetRotation(_glmFromOvrQuat(layer.RenderPose[eye].Orientation));
+    return result;
 }
 
 glm::mat4 VRSystem::GetViewFromEye(int eye)

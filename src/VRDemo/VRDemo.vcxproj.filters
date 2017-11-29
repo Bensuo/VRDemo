@@ -49,9 +49,6 @@
     <Filter Include="Engine\Input">
       <UniqueIdentifier>{a74905b4-fab0-4dd2-8846-c7a649c40e14}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Rendering\Camera">
-      <UniqueIdentifier>{c7202f1b-c231-4304-a8ff-537ae641c8f5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Rendering\Renderable Types\Lights">
       <UniqueIdentifier>{ed5343bf-70ab-45c6-ae54-ab0f2f0ec6c7}</UniqueIdentifier>
     </Filter>
@@ -63,6 +60,9 @@
     </Filter>
     <Filter Include="Engine\VR">
       <UniqueIdentifier>{816688a1-3873-4e3b-8bf5-d8c730c253f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering\Player">
+      <UniqueIdentifier>{c7202f1b-c231-4304-a8ff-537ae641c8f5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -143,9 +143,6 @@
     </ClInclude>
     <ClInclude Include="ModelFactory.h">
       <Filter>Engine\Content\Factories</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Engine\Rendering\Camera</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Engine\Game</Filter>
@@ -236,6 +233,9 @@
     </ClInclude>
     <ClInclude Include="OvrConversions.h">
       <Filter>Engine\VR</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Engine\Rendering\Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

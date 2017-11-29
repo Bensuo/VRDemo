@@ -3,7 +3,6 @@
 #include <GL/glew.h>
 #include "RenderingEngine.h"
 #include "Mesh.h"
-#include "Camera.h"
 #include "Skybox.h"
 #include <glm/glm.hpp>
 #include <Extras/OVR_Math.h>
@@ -16,7 +15,7 @@ namespace Engine
 {
     namespace Rendering
     {
-        RenderingEngine::RenderingEngine(VRSystem& system)
+        RenderingEngine::RenderingEngine(std::shared_ptr<VRSystem> system)
 			: vr_system(system)
         {
             version = std::string(reinterpret_cast<char const*>(glGetString(GL_VERSION)));
@@ -47,7 +46,7 @@ namespace Engine
 
 	    void RenderingEngine::ClearEyeBuffer(int eye)
         {
-			vr_system.ClearEyeBuffer(eye);
+			vr_system->ClearEyeBuffer(eye);
         }
 
         void RenderingEngine::Begin(const Shader& shader)
@@ -199,18 +198,18 @@ namespace Engine
 
 	    void RenderingEngine::EndRender()
         {
-			vr_system.EndFrame();
-			vr_system.RenderMirror(1280, 720);
+			vr_system->EndFrame();
+			vr_system->RenderMirror(1280, 720);
         }
 
 	    void RenderingEngine::BeginRender()
         {
-			vr_system.BeginFrame();
+			vr_system->BeginFrame();
         }
 
 	    void RenderingEngine::Commit(int eye)
         {
-			vr_system.CommitBuffer(eye);
+			vr_system->CommitBuffer(eye);
         }
     }
 }

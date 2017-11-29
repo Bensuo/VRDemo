@@ -1,9 +1,9 @@
 #ifndef BLINNPHONGGAME_H
 #define BLINNPHONGGAME_H
 
+#include "Player.h"
 #include "Game.h"
 #include "Skybox.h"
-#include "Camera.h"
 #include "Light.h"
 #include "Button.h"
 #include <OVR_CAPI_GL.h>
@@ -13,9 +13,8 @@ using namespace Engine;
  */
 class VRDemoGame : public Game
 {
-    Rendering::Camera camera;
+    VRPlayer player;
     Rendering::Model dining_room;
-    Rendering::Model test_hands;
     Rendering::Skybox skybox;
 
     Rendering::Shader shadow_shader;
@@ -36,8 +35,6 @@ class VRDemoGame : public Game
     Input::Button lighting_active;
     Input::Button show_normal_mapping;
 
-    glm::mat4 view;
-	
     /**
      * \brief Render a skybox.
      * \param shader The shader you want to use while rendering the skybox.

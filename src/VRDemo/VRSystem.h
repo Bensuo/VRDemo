@@ -4,6 +4,7 @@
 #include "TextureBuffer.h"
 #include "Transform3D.hpp"
 #include "Avatar.h"
+#include "glm/vec3.hpp"
 
 struct VRControllerState
 {
@@ -17,6 +18,7 @@ private:
     VRControllerState m_left;
     VRControllerState m_right;
 public:
+    VRInputState() {}
     VRInputState(const VRControllerState left, const VRControllerState right)
     : m_left(left), m_right(right) {}
 
@@ -48,7 +50,9 @@ public:
 
     VRInputState GetInputState() const;
 
-    glm::vec3 EyePos(int eye);
+    Transform3D GetHMDTransform();
+    Transform3D GetEyeTransform(int eye);
+    glm::vec3 GetEyePos(int eye);
 private:
     int frameIndex;
 	ovrSession session;

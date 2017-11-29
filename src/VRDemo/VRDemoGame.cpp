@@ -8,9 +8,6 @@ void VRDemoGame::HandleInput()
 {
     const auto& keyboard_state = Input::Keyboard::GetState();
     const auto& mouse_state = Input::Mouse::GetState();
-    const auto vr_input_state = vr_system.GetInputState();
-    const auto& left_axis = vr_input_state.GetLeft().ThumbstickAxis;
-    const auto& right_axis = vr_input_state.GetRight().ThumbstickAxis;
 
     if (keyboard_state.IsKeyDown(Key_Escape))
     {
@@ -19,22 +16,22 @@ void VRDemoGame::HandleInput()
 
     if (keyboard_state.IsKeyDown(Key_W))
     {
-        camera.MoveForward();
+        player.MoveForward();
     }
 
     if (keyboard_state.IsKeyDown(Key_A))
     {
-        camera.MoveLeft();
+        player.MoveLeft();
     }
 
     if (keyboard_state.IsKeyDown(Key_S))
     {
-        camera.MoveBackward();
+        player.MoveBackward();
     }
 
     if (keyboard_state.IsKeyDown(Key_D))
     {
-        camera.MoveRight();
+        player.MoveRight();
     }
 
     if (keyboard_state.IsKeyDown(Key_Space))
@@ -83,17 +80,20 @@ void VRDemoGame::HandleInput()
     }
 
     const auto& motion = mouse_state.RelativeMotion();
-    camera.RotateFromAxes(right_axis.x, right_axis.y);
 
-    camera.MoveFromAxes(left_axis.x, left_axis.y);
+    const auto& vr_input_state = vr_system->GetInputState();
+    const auto& left_axis = vr_input_state.GetLeft().ThumbstickAxis;
+    const auto& right_axis = vr_input_state.GetRight().ThumbstickAxis;
+    player.RotateFromAxes(right_axis.x, right_axis.y);
+    player.MoveFromAxes(left_axis.x, left_axis.y);
 }
 
 void VRDemoGame::Update(const GameTime delta_time)
 {
+    player.Update(delta_time);
     HandleInput();
-    camera.Update(delta_time);
 
-    vr_system.UpdateAvatar(delta_time);
+    vr_system->UpdateAvatar(delta_time);
 
     Game::Update(delta_time);
 }
@@ -102,7 +102,6 @@ void VRDemoGame::RenderScene(const Rendering::Shader& shader)
 {
     rendering_engine.Begin(shader);
     {
-        rendering_engine.ScaleMatrix(glm::vec3(1.0f));
         dining_room.Draw(rendering_engine);
     }
     rendering_engine.End();
@@ -110,20 +109,15 @@ void VRDemoGame::RenderScene(const Rendering::Shader& shader)
 
 void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
 {
-    // move oculus data into our virtual camera's space
-    auto new_view = vr_system.GetViewFromEye(eye);
-    auto eye_pos = glm::vec3(glm::vec4(vr_system.EyePos(eye), 1));
-    auto hand_left_pos = glm::vec3(glm::vec4(vr_system.GetInputState().GetLeft().Transform.GetPosition(), 1));
-    auto hand_left_dir = glm::vec3(glm::vec4(vr_system.GetInputState().GetLeft().Transform.GetRotation() * glm::vec3(0, 0, -1), 0));
-    auto hand_right_pos = glm::vec3(glm::vec4(vr_system.GetInputState().GetRight().Transform.GetPosition(), 1));
+    point_light.Position = player.GetPlayerTransform().GetPosition();
+    flash_light.Position = player.GetLeftHandTransformWorldspace().GetPosition();
+    flash_light.Direction = player.GetLeftHandTransformWorldspace().GetFrontDirection();
 
-    camera.SetFront(glm::vec3(glm::vec4(vr_system.GetFront(), 0)));
-
-    point_light.Position = eye_pos;
-    flash_light.Position = hand_left_pos;
-    flash_light.Direction = hand_left_dir;
-
-	rendering_engine.Begin(new_view, vr_system.GetProjectionMatrix(eye), eye_pos, shader);
+    rendering_engine.Begin(
+        player.GetEyeViewWorldSpace(eye),
+        vr_system->GetProjectionMatrix(eye),
+        player.GetEyeTransformWorldspace(eye).GetPosition(),
+        shader); 
     {
         shader.SetBool("blinn_phong", blinn_phong);
         shader.SetBool("lamps_active", lamps_active);
@@ -137,17 +131,17 @@ void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
         rendering_engine.AddLight(directional_light);
 
         dining_room.Draw(rendering_engine);
-        test_hands.Draw(rendering_engine);
     }
     rendering_engine.End();
 }
 
 void VRDemoGame::RenderSkybox(const Rendering::Shader& shader, int eye)
 {
-    auto new_view = vr_system.GetViewFromEye(eye) * view;
-    auto eye_pos = glm::vec3(glm::vec4(vr_system.EyePos(eye), 1) * view);
-
-    rendering_engine.Begin(new_view, vr_system.GetProjectionMatrix(eye), eye_pos, shader);
+    rendering_engine.Begin(
+        player.GetEyeViewWorldSpace(eye), 
+        vr_system->GetProjectionMatrix(eye),
+        player.GetEyeTransformWorldspace(eye).GetPosition(), 
+        shader);
     {
         skybox.Draw(rendering_engine);
     }
@@ -173,7 +167,7 @@ void VRDemoGame::Render()
 
 void VRDemoGame::SetUpLighting()
 {
-    point_light.Position = camera.Position();
+    point_light.Position = player.GetPlayerTransform().GetPosition();
     point_light.Ambient = glm::vec3(0.0333, 0.0333, 0.0333);
     point_light.Diffuse = glm::vec3(1.0, 1.0, 0.5);
     point_light.Specular = glm::vec3(1.0, 1.0, 1.0);
@@ -189,8 +183,8 @@ void VRDemoGame::SetUpLighting()
     flash_light.Quadratic = 0.032;
     flash_light.CutOff = glm::cos(glm::radians(15.0f));
     flash_light.OuterCutOff = glm::cos(glm::radians(25.0f));
-    flash_light.Position = camera.Position();
-    flash_light.Direction = camera.GetFront();
+    flash_light.Position = player.GetPlayerTransform().GetPosition();
+    flash_light.Direction = player.GetLeftHandTransformWorldspace().GetFrontDirection();
 
     directional_light.Direction = glm::vec3(-1.0, -1.0, -0.666);
     directional_light.Ambient = glm::vec3(0.0, 0.0, 0.0);
@@ -226,12 +220,7 @@ void VRDemoGame::SetUpLighting()
 }
 
 VRDemoGame::VRDemoGame()
-    : camera(glm::perspective(1.0f, 1280.0f / 720.0f, 0.1f, 100.0f),
-        glm::vec3(-0.6, 0, 5),
-        glm::vec3(0.0, 1.0, 0.0),
-        -90.0f,
-        -23.33f),
-    dining_room(content.LoadModel("res/models/sponza2/sponza.obj")),
+    : dining_room(content.LoadModel("res/models/sponza2/sponza.obj")),
     skybox(content.LoadSkybox("res/textures/right.bmp",
         "res/textures/left.bmp",
         "res/textures/top.bmp",
@@ -241,12 +230,16 @@ VRDemoGame::VRDemoGame()
     shadow_shader(content.LoadShader("res/shaders/parallax-blinn-2.vs", "res/shaders/parallax-blinn-2.fs")),
     depth_shader(content.LoadShader("res/shaders/shadow_depth.vs", "res/shaders/shadow_depth.fs")),
     skybox_shader(content.LoadShader("res/shaders/skybox.vs", "res/shaders/skybox.fs")),
-    test_hands(content.LoadModel("res/models/cube.obj")),
     lamps_active(true),
     blinn_phong(true),
     lighting_active(true),
-    show_normal_mapping(true)
+    show_normal_mapping(true),
+    player(vr_system)
 {
+    Transform3D transform;
+    transform.SetPosition(glm::vec3(0, 2.5, 0));
+    player.SetTransform(transform);
+
     SetUpLighting();
 
     glm::vec3 pos(-2.0f, 0.0f, 2.0f);
@@ -291,9 +284,8 @@ VRDemoGame::VRDemoGame()
     // -----------
     while (true)
     {
-        auto hand_left_pos = glm::vec3(glm::vec4(vr_system.GetInputState().GetLeft().Transform.GetPosition(), 1));
-        auto hand_left_dir = glm::vec3(glm::vec4(vr_system.GetInputState().GetLeft().Transform.GetRotation() * glm::vec3(0, 0, -1), 0));
-        test_hands.SetTransform(Transform3D(hand_left_pos, glm::vec3(0.01f), vr_system.GetInputState().GetLeft().Transform.GetRotation()));
+        auto hand_left_pos = glm::vec3(glm::vec4(vr_system->GetInputState().GetLeft().Transform.GetPosition(), 1));
+        auto hand_left_dir = glm::vec3(glm::vec4(vr_system->GetInputState().GetLeft().Transform.GetRotation() * glm::vec3(0, 0, -1), 0));
 
         Update(1 / 60.0f);
         // change light position over time
@@ -343,7 +335,7 @@ VRDemoGame::VRDemoGame()
         spot_light.Position = hand_left_pos;
         spot_light.Direction = hand_left_dir;
         shadow_shader.SetSpotLight(spot_light);
-        point_light.Position = camera.Position();
+        point_light.Position = player.GetPlayerTransform().GetPosition();
 
         rendering_engine.AddLight(flash_light);
         rendering_engine.AddLight(point_light);

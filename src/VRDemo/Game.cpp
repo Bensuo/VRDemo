@@ -47,15 +47,16 @@ namespace Engine
         running = false;
     }
 
-	Game::Game()
-		: window(1280, 720, "VRDemo"),
-		rendering_engine(vr_system)
+    Game::Game()
+        : window(1280, 720, "VRDemo"),
+        rendering_engine(vr_system),
+        vr_system(std::make_shared<VRSystem>())
     {
         window.OnClose.Connect([&]()
         {
             Quit();
         });
-		vr_system.Init();
+		vr_system->Init();
     }
 
     int Game::Run()

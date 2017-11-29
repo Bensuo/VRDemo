@@ -24,22 +24,31 @@ public:
 	{
 		return m_scale;
 	}
+
 	const glm::quat& GetRotation() const
 	{
 		return m_rotation;
 	}
+
 	void SetPosition(glm::vec3& new_pos)
 	{
 		m_position = new_pos;
 	}
+
 	void SetScale(glm::vec3& new_scale)
 	{
 		m_scale = new_scale;
 	}
+
 	void SetRotation(glm::quat& new_rotation)
 	{
 		m_rotation = new_rotation;
 	}
+
+    glm::vec3 GetFrontDirection() const
+    {
+        return m_rotation * glm::vec3(0, 0, -1);
+    }
 private:
 	glm::vec3 m_position;
 	glm::vec3 m_scale;
