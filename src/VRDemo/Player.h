@@ -58,20 +58,14 @@ namespace Engine
             movement_vectors.Update(vr_system->GetHMDTransform().GetFrontDirection() * transform.GetRotation());
         }
 
-        Transform3D GetEyeTransformWorldspace(int eye)
+        glm::vec3 GetEyePosWorldspace(int eye)
         {
-            Transform3D result;
-            auto localEyeSpace = vr_system->GetEyeTransform(eye);
-
-            result.SetPosition(localEyeSpace.GetPosition());
-            result.SetRotation(localEyeSpace.GetRotation() * transform.GetRotation());
-
-            return result;
+            auto rot = glm::mat4_cast(transform.GetRotation());
+            return glm::vec3(glm::vec4(vr_system->GetEyePos(eye), 1) * glm::mat4()) + transform.GetPosition();
         }
 
         glm::vec3 GetLeftHandDirWorldspace()
         {
-            auto hand = input_state.GetLeft().Transform;
             return vr_system->GetInputState().GetLeft().Transform.GetFrontDirection() * transform.GetRotation();
         }
 
@@ -84,7 +78,6 @@ namespace Engine
 
         glm::vec3 GetRightHandDirWorldspace()
         {
-            auto hand = input_state.GetRight().Transform;
             return vr_system->GetInputState().GetRight().Transform.GetFrontDirection() * transform.GetRotation();
         }
 
@@ -106,8 +99,6 @@ namespace Engine
 
             movement_vectors.Update(vr_system->GetHMDTransform().GetFrontDirection() * transform.GetRotation());
             movement_vectors.Movement_Dir = glm::vec3();
-
-            std::cout << movement_vectors.Front.x << ", " << movement_vectors.Front.y << ", " << movement_vectors.Front.z << std::endl;
         }
 
         void MoveFromAxes(float xoffset, float yoffset)

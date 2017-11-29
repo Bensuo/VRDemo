@@ -116,7 +116,7 @@ void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
     rendering_engine.Begin(
         player.GetEyeViewWorldSpace(eye),
         vr_system->GetProjectionMatrix(eye),
-        player.GetEyeTransformWorldspace(eye).GetPosition(),
+        player.GetEyePosWorldspace(eye),
         shader); 
     {
         shader.SetBool("blinn_phong", blinn_phong);
@@ -140,7 +140,7 @@ void VRDemoGame::RenderSkybox(const Rendering::Shader& shader, int eye)
     rendering_engine.Begin(
         player.GetEyeViewWorldSpace(eye), 
         vr_system->GetProjectionMatrix(eye),
-        player.GetEyeTransformWorldspace(eye).GetPosition(), 
+        player.GetEyePosWorldspace(eye), 
         shader);
     {
         skybox.Draw(rendering_engine);
@@ -169,11 +169,11 @@ void VRDemoGame::SetUpLighting()
 {
     point_light.Position = player.GetPlayerTransform().GetPosition();
     point_light.Ambient = glm::vec3(0.0333, 0.0333, 0.0333);
-    point_light.Diffuse = glm::vec3(1.0, 1.0, 0.5);
+    point_light.Diffuse = glm::vec3(1.0, 0.65, 0.45);
     point_light.Specular = glm::vec3(1.0, 1.0, 1.0);
     point_light.Constant = 1.0;
-    point_light.Linear = 0.09;
-    point_light.Quadratic = 0.16;
+    point_light.Linear = 0.7;
+    point_light.Quadratic = 1.8;
 
     flash_light.Ambient = glm::vec3(0.0, 0.0, 0.0);
     flash_light.Diffuse = glm::vec3(1.0, 1.0, 1.0);
@@ -284,8 +284,8 @@ VRDemoGame::VRDemoGame()
     // -----------
     while (true)
     {
-        auto hand_left_pos = glm::vec3(glm::vec4(vr_system->GetInputState().GetLeft().Transform.GetPosition(), 1));
-        auto hand_left_dir = glm::vec3(glm::vec4(vr_system->GetInputState().GetLeft().Transform.GetRotation() * glm::vec3(0, 0, -1), 0));
+        auto hand_left_pos = player.GetLeftHandPosWorldspace();
+        auto hand_left_dir = player.GetLeftHandDirWorldspace();
 
         Update(1 / 60.0f);
         // change light position over time
