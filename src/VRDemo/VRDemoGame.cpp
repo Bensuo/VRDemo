@@ -110,8 +110,8 @@ void VRDemoGame::RenderScene(const Rendering::Shader& shader)
 void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
 {
     point_light.Position = player.GetPlayerTransform().GetPosition();
-    flash_light.Position = player.GetLeftHandTransformWorldspace().GetPosition();
-    flash_light.Direction = player.GetLeftHandTransformWorldspace().GetFrontDirection();
+    flash_light.Position = player.GetLeftHandPosWorldspace();
+    flash_light.Direction = player.GetLeftHandDirWorldspace();
 
     rendering_engine.Begin(
         player.GetEyeViewWorldSpace(eye),
@@ -183,8 +183,8 @@ void VRDemoGame::SetUpLighting()
     flash_light.Quadratic = 0.032;
     flash_light.CutOff = glm::cos(glm::radians(15.0f));
     flash_light.OuterCutOff = glm::cos(glm::radians(25.0f));
-    flash_light.Position = player.GetPlayerTransform().GetPosition();
-    flash_light.Direction = player.GetLeftHandTransformWorldspace().GetFrontDirection();
+    flash_light.Position = player.GetLeftHandPosWorldspace();
+    flash_light.Direction = player.GetLeftHandDirWorldspace();
 
     directional_light.Direction = glm::vec3(-1.0, -1.0, -0.666);
     directional_light.Ambient = glm::vec3(0.0, 0.0, 0.0);

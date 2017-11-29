@@ -69,26 +69,30 @@ namespace Engine
             return result;
         }
 
-        Transform3D GetLeftHandTransformWorldspace()
+        glm::vec3 GetLeftHandDirWorldspace()
         {
-            Transform3D result;
             auto hand = input_state.GetLeft().Transform;
-            
-            result.SetPosition(hand.GetPosition() + transform.GetPosition());
-            result.SetRotation(hand.GetRotation() * transform.GetRotation());
-
-            return result;
+            return vr_system->GetInputState().GetLeft().Transform.GetFrontDirection() * transform.GetRotation();
         }
 
-        Transform3D GetRightHandTransformWorldspace()
+        glm::vec3 GetLeftHandPosWorldspace()
         {
-            Transform3D result;
+            auto rot = glm::mat4_cast(transform.GetRotation());
+            rot = glm::translate(rot, -transform.GetPosition());
+            return glm::vec3(glm::vec4(input_state.GetLeft().Transform.GetPosition(), 1) * rot) + transform.GetPosition();
+        }
+
+        glm::vec3 GetRightHandDirWorldspace()
+        {
             auto hand = input_state.GetRight().Transform;
+            return vr_system->GetInputState().GetRight().Transform.GetFrontDirection() * transform.GetRotation();
+        }
 
-            result.SetPosition(hand.GetPosition() + transform.GetPosition());
-            result.SetRotation(hand.GetRotation() * transform.GetRotation());
-
-            return result;
+        glm::vec3 GetRightHandPosWorldspace()
+        {
+            auto rot = glm::mat4_cast(transform.GetRotation());
+            rot = glm::translate(rot, -transform.GetPosition());
+            return glm::vec3(glm::vec4(input_state.GetRight().Transform.GetPosition(), 1) * rot) + transform.GetPosition();
         }
 
         void Update(const GameTime delta_time)
