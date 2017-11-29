@@ -154,7 +154,7 @@ void VRDemoGame::Render()
     auto hand_left_pos = player.GetLeftHandPosWorldspace();
     auto hand_left_dir = player.GetLeftHandDirWorldspace();
 
-    rendering_engine.BeginDepthPass(hand_left_pos, hand_left_dir, 0.1f, 40.0f, 55.0f);
+    rendering_engine.BeginDepthPass(hand_left_pos, hand_left_dir, 1.0f, 10.0f, 55.0f);
     RenderScene(rendering_engine.DepthShader());
     rendering_engine.EndDepthPass();
 

@@ -271,11 +271,13 @@ namespace Engine
             glViewport(0, 0, shadow_map_data.ShadowWidth, shadow_map_data.ShadowHeight);
             glBindFramebuffer(GL_FRAMEBUFFER, shadow_map_data.DepthMapFBO);
             glClear(GL_DEPTH_BUFFER_BIT);
+            glCullFace(GL_FRONT);
         }
 
         void RenderingEngine::EndDepthPass() const
         {
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glCullFace(GL_BACK);
         }
     }
 }
