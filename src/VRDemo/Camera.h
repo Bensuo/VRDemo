@@ -17,6 +17,8 @@ namespace Engine
         class Camera
         {
             glm::vec3 position;
+			glm::vec3 offset_position;
+			const glm::vec3 rigid_body_offset{ 0, 0.3f, 0 };
             glm::vec3 front;
             glm::vec3 up;
             glm::vec3 right;
@@ -46,10 +48,10 @@ namespace Engine
                 return projection;
             }
 
-            const glm::vec3& Position() const
+            const glm::vec3& Position()
             {
-
-                return transform->GetPosition();
+				offset_position = transform->GetPosition() - rigid_body_offset;
+                return offset_position;
             }
 
             void SetFront(const glm::vec3& front)
@@ -80,10 +82,11 @@ namespace Engine
                 UpdateCameraVectors();
 				this->position.y = 40;
 				transform = new Transform3D(this->position);
-				rigid_body = new RigidBodySphere(0.5f, 100.0f,transform);
+				rigid_body = new RigidBodySphere(0.3f, 100.0f,transform);
 				rigid_body->SetRestitution(1.0f);
 				//rigid_body->m_rigid_body->setAngularFactor(btVector3(0.0f,0.0f, 0.0f));
 				rigid_body->m_rigid_body->setDamping(0.99f, 0.99f);
+				
             }
 
             glm::mat4 View() const
