@@ -63,7 +63,7 @@ namespace Engine
             Transform3D result;
             auto localEyeSpace = vr_system->GetEyeTransform(eye);
 
-            result.SetPosition(localEyeSpace.GetPosition() + transform.GetPosition());
+            result.SetPosition(localEyeSpace.GetPosition());
             result.SetRotation(localEyeSpace.GetRotation() * transform.GetRotation());
 
             return result;

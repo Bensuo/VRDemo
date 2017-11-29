@@ -30,17 +30,17 @@ public:
 		return m_rotation;
 	}
 
-	void SetPosition(glm::vec3& new_pos)
+	void SetPosition(const glm::vec3& new_pos)
 	{
 		m_position = new_pos;
 	}
 
-	void SetScale(glm::vec3& new_scale)
+	void SetScale(const glm::vec3& new_scale)
 	{
 		m_scale = new_scale;
 	}
 
-	void SetRotation(glm::quat& new_rotation)
+	void SetRotation(const glm::quat& new_rotation)
 	{
 		m_rotation = new_rotation;
 	}
