@@ -11,7 +11,7 @@ namespace Physics
 		PhysicsEngine();
 		~PhysicsEngine();
 		void SetGravity(float x, float y, float z);
-		void AddRigidBody(RigidBody& rigid_body);
+		void AddRigidBody(RigidBody& rigid_body, int type, int collidesWith);
 		void StepSimulation(float timeStep);
 		void RemoveRigidBody(RigidBody& rigid_body);
 		void SetMaxSubsteps(int val);

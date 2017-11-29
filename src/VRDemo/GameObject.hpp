@@ -15,6 +15,11 @@ public:
 	{
 		transform = new Transform3D();
 	}
+	~GameObject()
+	{
+		delete transform;
+		delete rigid_body;
+	}
 	void Draw(Engine::Rendering::IRenderingEngine& rendering_engine)
 	{
 		rendering_engine.PushMatrix();

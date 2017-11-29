@@ -15,9 +15,11 @@ public:
 		btMotionState* motion = new PhysicsMotionState(transform, "");
 		btVector3 fallIntertia(0, 0, 0);
 		shape->calculateLocalInertia(mass, fallIntertia);
+		auto scale = transform->GetScale();
+		shape->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
 		btRigidBody::btRigidBodyConstructionInfo info(mass, motion, shape, fallIntertia);
 		m_rigid_body = new btRigidBody(info);
-		m_rigid_body->activate();
+		m_rigid_body->setActivationState(DISABLE_DEACTIVATION);
 	}
 	~RigidBodySphere(){}
 private:

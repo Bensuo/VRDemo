@@ -29,10 +29,10 @@ void Physics::PhysicsEngine::SetGravity(float x, float y, float z)
 	m_dynamics_world->setGravity(btVector3(x, y, z));
 }
 
-void Physics::PhysicsEngine::AddRigidBody(RigidBody& rigid_body)
+void Physics::PhysicsEngine::AddRigidBody(RigidBody& rigid_body, int type, int collidesWith)
 {
 	
-	m_dynamics_world->addRigidBody(rigid_body.m_rigid_body);
+	m_dynamics_world->addRigidBody(rigid_body.m_rigid_body, type, collidesWith);
 	//m_dynamics_world->updateSingleAabb(rigid_body.m_rigid_body);
 	
 }

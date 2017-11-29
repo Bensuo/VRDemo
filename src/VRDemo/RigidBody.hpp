@@ -34,6 +34,10 @@ public:
 	 {
 		 m_rigid_body->setRestitution(val);
 	 }
+	void SetDamping(float lin, float angular)
+	 {
+		m_rigid_body->setDamping(lin, angular);
+	 }
 protected:
 	//Protected constructor to prevent instantiation except by derived classes
 	RigidBody(){}

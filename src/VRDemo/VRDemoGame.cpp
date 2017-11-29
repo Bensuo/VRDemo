@@ -5,6 +5,7 @@
 #include "Light.h"
 #include "RigidBodySphere.hpp"
 
+
 void VRDemoGame::HandleInput()
 {
     const auto& keyboard_state = Input::Keyboard::GetState();
@@ -87,6 +88,8 @@ void VRDemoGame::HandleInput()
     camera.RotateFromAxes(right_axis.x, right_axis.y);
 
     camera.MoveFromAxes(left_axis.x, left_axis.y);
+	hand_left_transform->SetPosition(glm::vec3( glm::vec4(vr_input_state.GetLeft().Transform.GetPosition(), 1)*camera.Yaw() ) + camera.Position());
+	hand_right_transform->SetPosition(glm::vec3(glm::vec4(vr_input_state.GetRight().Transform.GetPosition(), 1)*camera.Yaw()) + camera.Position());
 }
 
 void VRDemoGame::Update(const GameTime delta_time)
@@ -128,20 +131,11 @@ void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
         rendering_engine.AddLights(spot_lights);
         rendering_engine.AddLight(directional_light);
 
-        /*dining_room.Draw(rendering_engine);
-		cube.Draw(rendering_engine);
-	    for (auto cube : cubes)
+	    for (auto object : game_objects)
 	    {
-			cube.Draw(rendering_engine);
+			object->Draw(rendering_engine);
 	    }
-		cube2.Draw(rendering_engine);
-		cube3.Draw(rendering_engine);
-		cube4.Draw(rendering_engine);
-		cube5.Draw(rendering_engine);*/
-	    for (auto& object : game_objects)
-	    {
-			object.Draw(rendering_engine);
-	    }
+		hand_debug.Draw(rendering_engine);
     }
     rendering_engine.End();
 }
@@ -235,18 +229,18 @@ void VRDemoGame::SetUpLighting()
 
 VRDemoGame::VRDemoGame()
 	: camera(glm::perspective(1.0f, 1280.0f / 720.0f, 0.1f, 100.0f),
-	         glm::vec3(-0.6, 0.0f, 5),
-	         glm::vec3(0.0, 1.0, 0.0),
-	         -90.0f,
-			-23.33f),
+		glm::vec3(-0.6, 0.0f, 5),
+		glm::vec3(0.0, 1.0, 0.0),
+		-90.0f,
+		-23.33f),
 	//dining_room(content.LoadModel("res/models/sponza2/sponza.obj")),
 	test_hands(content.LoadModel("res/models/cube.obj")),
 	skybox(content.LoadSkybox("res/textures/right.bmp",
-	                          "res/textures/left.bmp",
-	                          "res/textures/top.bmp",
-	                          "res/textures/bottom.bmp",
-	                          "res/textures/back.bmp",
-	                          "res/textures/front.bmp")),
+		"res/textures/left.bmp",
+		"res/textures/top.bmp",
+		"res/textures/bottom.bmp",
+		"res/textures/back.bmp",
+		"res/textures/front.bmp")),
 	//sponza_mesh(new RigidBodyMesh(content.LoadCollisionMesh("res/models/sponza2/sponza.obj"), glm::vec3(1.0f), glm::vec3(0))),
 	blinn_shader(content.LoadShader("res/shaders/parallax-blinn-2.vs", "res/shaders/parallax-blinn-2.fs")),
 	skybox_shader(content.LoadShader("res/shaders/skybox.vs", "res/shaders/skybox.fs")),
@@ -255,31 +249,44 @@ VRDemoGame::VRDemoGame()
 	lighting_active(true),
 	show_normal_mapping(true)
 {
-    SetUpLighting();
-	
-	//add sponza
-	game_objects.push_back(GameObject());
-	game_objects[0].model = content.LoadModel("res/models/sponza2/sponza.obj");
-	game_objects[0].rigid_body = new RigidBodyMesh(content.LoadCollisionMesh("res/models/sponza2/sponza.obj"), glm::vec3(1.0f), glm::vec3(0));
-	physics_engine.AddRigidBody(*game_objects[0].rigid_body);
+	SetUpLighting();
 
-		game_objects.emplace_back();
-		game_objects[1].model = content.LoadModel("res/models/testcube/testcube.obj");
-		game_objects[1].transform->SetPosition(glm::vec3(0.0f - 2.0f*1, 20, 0.1f*1));
-		//game_objects[i].transform.SetScale(glm::vec3(0.5f));
-		game_objects[1].rigid_body = new RigidBodyBox(glm::vec3(1.0f), 50.0, game_objects[1].transform, "first cube");
-		game_objects[1].rigid_body->SetRestitution(0.25f);
-		physics_engine.AddRigidBody(*game_objects[1].rigid_body);
-		game_objects.emplace_back();
-		game_objects[2].model = content.LoadModel("res/models/testcube/testcube.obj");
-		game_objects[2].transform->SetPosition(glm::vec3(0.0f + 1.0f * 2, 20, 0.1f * 2));
-		//game_objects[i].transform.SetScale(glm::vec3(0.5f));
-		game_objects[2].rigid_body = new RigidBodyBox(glm::vec3(1.0f), 50.0, game_objects[2].transform, "second cube");
-		game_objects[2].rigid_body->SetRestitution(0.25f);
-		physics_engine.AddRigidBody(*game_objects[2].rigid_body);
-		physics_engine.AddRigidBody(*camera.rigid_body);
-		physics_engine.SetInternalTickCallback(PhysicsCallback, static_cast<void*>(this));
-	//dining_room.GetTransform().SetScale(glm::vec3(0.015f));
+	//add sponza
+	game_objects.emplace_back(new GameObject());
+	game_objects[0]->model = content.LoadModel("res/models/sponza2/sponza.obj");
+	game_objects[0]->transform->SetScale(glm::vec3(3.0f));
+	game_objects[0]->rigid_body = new RigidBodyMesh(content.LoadCollisionMesh("res/models/sponza2/sponza.obj"), glm::vec3(3.0f), glm::vec3(0));
+	game_objects[0]->rigid_body->SetRestitution(1.0f);
+	physics_engine.AddRigidBody(*(game_objects[0]->rigid_body), COL_SCENE, COL_OBJECTS);
+	physics_engine.AddRigidBody(*camera.rigid_body, COL_OBJECTS, COL_SCENE | COL_OBJECTS);
+	for (size_t i = 1; i < 50; i++)
+	{
+		GameObject* gameObject = new GameObject();
+		//GameObject& gameObject = game_objects[i];
+		gameObject->model = content.LoadModel("res/models/testcube/testsphere.obj");
+		gameObject->transform->SetPosition(glm::vec3(0.0f, 100, 0));
+		gameObject->transform->SetScale(glm::vec3(1.0f));
+		gameObject->rigid_body = new RigidBodySphere(1.0f, 2.0f, gameObject->transform);
+		gameObject->rigid_body->SetRestitution(0.5f);
+		gameObject->rigid_body->SetDamping(0.1f, 0.2f);
+		physics_engine.AddRigidBody(*(gameObject->rigid_body), COL_OBJECTS, COL_SCENE | COL_OBJECTS | COL_HANDS);
+		game_objects.push_back(gameObject);
+	}
+	physics_engine.SetInternalTickCallback(PhysicsCallback, static_cast<void*>(this));
+	hand_left_transform = new Transform3D();
+	hand_left_transform->SetPosition(camera.Yaw() * vr_system.GetInputState().GetLeft().Transform.GetPosition() + camera.Position());
+	hand_left_transform->SetScale(glm::vec3(0.1f));
+	hand_left = new KinematicSphere(1.0f,hand_left_transform);
+
+	physics_engine.AddRigidBody(*hand_left, COL_HANDS, COL_OBJECTS);
+	hand_right_transform = new Transform3D();
+	hand_right_transform->SetPosition(camera.Yaw() * vr_system.GetInputState().GetRight().Transform.GetPosition() + camera.Position());
+	hand_right_transform->SetScale(glm::vec3(0.1f));
+	hand_right = new KinematicSphere(1.0f, hand_right_transform);
+
+	physics_engine.AddRigidBody(*hand_right, COL_HANDS, COL_OBJECTS);
+
+		//dining_room.GetTransform().SetScale(glm::vec3(0.015f));
 }
 
 void VRDemoGame::PhysicsCallback(btDynamicsWorld *world, btScalar timestep)

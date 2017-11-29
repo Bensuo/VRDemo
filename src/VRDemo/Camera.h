@@ -78,7 +78,7 @@ namespace Engine
                 zoom(zoom)
             {
                 UpdateCameraVectors();
-				this->position.y = 3;
+				this->position.y = 40;
 				transform = new Transform3D(this->position);
 				rigid_body = new RigidBodySphere(0.5f, 100.0f,transform);
 				rigid_body->SetRestitution(1.0f);
@@ -136,12 +136,15 @@ namespace Engine
 
             void MoveFromAxes(float xoffset, float yoffset)
             {
-                glm::vec2 axes(-xoffset, -yoffset);
+                glm::vec2 axes(xoffset, yoffset);
 
                 if (axes != glm::vec2(0))
                 {
-                    movement += front * axes.y;
-                    movement += glm::normalize(glm::cross(front, up)) * axes.x;
+					rigid_body->m_rigid_body->activate();
+					glm::vec3 new_front = front * axes.y * movement_speed;
+                    rigid_body->ApplyCentralForce(new_front.x, new_front.y, new_front.z);
+					glm::vec3 new_right = right * axes.x * movement_speed;
+					rigid_body->ApplyCentralForce(new_right.x, new_right.y, new_right.z);
                 }
             }
 

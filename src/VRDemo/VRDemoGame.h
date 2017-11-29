@@ -11,6 +11,16 @@
 #include "RigidBodyMesh.hpp"
 #include "RigidBodyBox.hpp"
 #include "GameObject.hpp"
+#include "KinematicSphere.hpp"
+
+#define BIT(x) (1<<(x))
+enum collisiontypes
+{
+	COL_NOTHING = 0,
+	COL_HANDS = BIT(0),
+	COL_OBJECTS = BIT(1),
+	COL_SCENE = BIT(2)
+};
 using namespace Engine;
 /**
  * \brief Our top-level class. Contains the scene and allows the player to interact with it.
@@ -19,7 +29,7 @@ class VRDemoGame : public Game
 {
     Rendering::Camera camera;
 
-	std::vector<GameObject> game_objects;
+	std::vector<GameObject*> game_objects;
     Rendering::Model test_hands;
     Rendering::Skybox skybox;
 
@@ -28,6 +38,11 @@ class VRDemoGame : public Game
 	Rendering::Shader textured_shader;
 	std::vector<Rendering::Model> cubes;
 	std::vector<RigidBodyBox*> cubes_bodies;
+	KinematicSphere* hand_left;
+	Transform3D* hand_left_transform;
+	GameObject hand_debug;
+	KinematicSphere* hand_right;
+	Transform3D* hand_right_transform;
     Rendering::SpotLight flash_light;
     Rendering::DirectionalLight directional_light;
     Rendering::PointLight point_light;
