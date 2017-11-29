@@ -21,7 +21,6 @@ class VRDemoGame : public Game
     Rendering::Shader blinn_shader;
     Rendering::Shader skybox_shader;
 	Rendering::Shader textured_shader;
-    Rendering::Shader depth_shader;
 
     Rendering::SpotLight flash_light;
     Rendering::DirectionalLight directional_light;
@@ -34,6 +33,8 @@ class VRDemoGame : public Game
     Input::Button flash_light_active;
     Input::Button lighting_active;
     Input::Button show_normal_mapping;
+
+    glm::mat4 light_space_matrix;
 
     /**
      * \brief Render a skybox.

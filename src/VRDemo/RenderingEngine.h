@@ -14,12 +14,21 @@ namespace Engine
 {
     namespace Rendering
     {
+        struct ShadowMapData
+        {
+            Shader DepthShader;
+            const unsigned int ShadowWidth = 1024, ShadowHeight = 1024;
+            unsigned int DepthMapFBO, DepthMap;
+            glm::mat4 LightSpaceMatrix;
+        };
+
         /**
          * \brief Abstracts OpenGL API calls.
          */
         class RenderingEngine : public IRenderingEngine
         {
-            Shader shader;
+            ShadowMapData shadow_map_data;
+            Shader current_shader;
             std::string version;
         public:
             RenderingEngine(std::shared_ptr<VRSystem> system);
@@ -34,6 +43,7 @@ namespace Engine
             void Draw(const Mesh* mesh) const override;
             void Draw(const Skybox* skybox) const override;
 
+            const Shader& DepthShader();
             void Begin(const glm::mat4& view, const glm::mat4& perspective, const glm::vec3& position, const Shader& shader) override;
             void End() override;
 
@@ -53,6 +63,13 @@ namespace Engine
 			void EndRender() override;
 	        void BeginRender() override;
 	        void Commit(int eye) override;
+
+            glm::ivec2 ShadowMapSize() const;
+
+            void SetViewport(const int x, const int y, const int width, const int height);
+
+            void BeginDepthPass(const glm::vec3& light_position, const glm::vec3& light_direction, const float near_plane, const float far_plane, const float fov);
+            void EndDepthPass() const;
         private:
             std::stack<glm::mat4> matrix_stack;
             glm::mat4 view;

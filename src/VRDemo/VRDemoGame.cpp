@@ -119,6 +119,7 @@ void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
         player.GetEyePosWorldspace(eye),
         shader); 
     {
+        shader.SetVec3("lightPos", player.GetLeftHandPosWorldspace());
         shader.SetBool("blinn_phong", blinn_phong);
         shader.SetBool("lamps_active", lamps_active);
         shader.SetBool("flash_light_active", flash_light_active);
@@ -150,6 +151,13 @@ void VRDemoGame::RenderSkybox(const Rendering::Shader& shader, int eye)
 
 void VRDemoGame::Render()
 {
+    auto hand_left_pos = player.GetLeftHandPosWorldspace();
+    auto hand_left_dir = player.GetLeftHandDirWorldspace();
+
+    rendering_engine.BeginDepthPass(hand_left_pos, hand_left_dir, 0.1f, 40.0f, 55.0f);
+    RenderScene(rendering_engine.DepthShader());
+    rendering_engine.EndDepthPass();
+
     rendering_engine.ClearScreen();
 	rendering_engine.BeginRender();
 	for (int i = 0; i < 2; ++i)
@@ -220,7 +228,7 @@ void VRDemoGame::SetUpLighting()
 }
 
 VRDemoGame::VRDemoGame()
-    : dining_room(content.LoadModel("res/models/sponza2/sponza.obj")),
+    : dining_room(content.LoadModel("res/models/living_room.obj")),
     skybox(content.LoadSkybox("res/textures/right.bmp",
         "res/textures/left.bmp",
         "res/textures/top.bmp",
@@ -228,7 +236,6 @@ VRDemoGame::VRDemoGame()
         "res/textures/back.bmp",
         "res/textures/front.bmp")),
     shadow_shader(content.LoadShader("res/shaders/parallax-blinn-2.vs", "res/shaders/parallax-blinn-2.fs")),
-    depth_shader(content.LoadShader("res/shaders/shadow_depth.vs", "res/shaders/shadow_depth.fs")),
     skybox_shader(content.LoadShader("res/shaders/skybox.vs", "res/shaders/skybox.fs")),
     lamps_active(true),
     blinn_phong(true),
@@ -247,102 +254,6 @@ VRDemoGame::VRDemoGame()
     glm::quat rot;
     dining_room.SetTransform(Transform3D(pos, scale, rot));
 
-    // configure depth map FBO
-    // -----------------------
-    const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
-    unsigned int depthMapFBO;
-    glGenFramebuffers(1, &depthMapFBO);
-    // create depth texture
-    unsigned int depthMap;
-    glGenTextures(1, &depthMap);
-    glBindTexture(GL_TEXTURE_2D, depthMap);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-    // attach depth texture as FBO's depth buffer
-    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-    glDrawBuffer(GL_NONE);
-    glReadBuffer(GL_NONE);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-
-    // shader configuration
-    // --------------------
     shadow_shader.Use();
     shadow_shader.SetInt("shadowMap", 30);
-
-    // lighting info
-    // -------------
-
-    // render loop
-
-    // -----------
-    while (true)
-    {
-        auto hand_left_pos = player.GetLeftHandPosWorldspace();
-        auto hand_left_dir = player.GetLeftHandDirWorldspace();
-
-        Update(1 / 60.0f);
-        // change light position over time
-        //lightPos.x = sin(glfwGetTime()) * 3.0f;
-        //lightPos.z = cos(glfwGetTime()) * 2.0f;
-        //lightPos.y = 5.0 + cos(glfwGetTime()) * 1.0f;
-
-        // render
-        // ------
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // 1. render depth of scene to texture (from light's perspective)
-        // --------------------------------------------------------------
-        glm::mat4 lightProjection, lightView;
-        glm::mat4 lightSpaceMatrix;
-        float near_plane = 0.1f, far_plane = 20.0f;
-        lightProjection = glm::perspective(glm::radians(55.0f), (GLfloat)SHADOW_WIDTH / (GLfloat)SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
-
-        lightView = glm::lookAt(hand_left_pos, hand_left_pos + hand_left_dir, glm::vec3(0.0, 1.0, 0.0));
-        lightSpaceMatrix = lightProjection * lightView;
-        // render scene from light's point of view
-        depth_shader.Use();
-        depth_shader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
-
-        glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-        glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-        glClear(GL_DEPTH_BUFFER_BIT);
-        RenderScene(depth_shader);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        shadow_shader.Use();
-        shadow_shader.SetVec3("lightPos", hand_left_pos);
-        shadow_shader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
-        glActiveTexture(GL_TEXTURE30);
-        glBindTexture(GL_TEXTURE_2D, depthMap);
-
-        Engine::Rendering::SpotLight spot_light;
-        spot_light.Ambient = glm::vec3(0.0, 0.0, 0.0);
-        spot_light.Diffuse = glm::vec3(1.0, 0.65, 0.25);
-        spot_light.Specular = glm::vec3(1.0, 1.0, 1.0);
-        spot_light.Constant = 1.0;
-        spot_light.Linear = 0.7;
-        spot_light.Quadratic = 1.2;
-        spot_light.CutOff = glm::cos(glm::radians(12.0f));
-        spot_light.OuterCutOff = glm::cos(glm::radians(10.0f));
-        spot_light.Position = hand_left_pos;
-        spot_light.Direction = hand_left_dir;
-        shadow_shader.SetSpotLight(spot_light);
-        point_light.Position = player.GetPlayerTransform().GetPosition();
-
-        rendering_engine.AddLight(flash_light);
-        rendering_engine.AddLight(point_light);
-        rendering_engine.AddLight(directional_light);
-
-        Render();
-
-        window.SwapBuffer();
-    }
 }
