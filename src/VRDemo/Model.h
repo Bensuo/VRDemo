@@ -25,6 +25,11 @@ namespace Engine
 			{
 				return transform;
 			}
+
+            void SetTransform(const Transform3D& transform)
+            {
+                this->transform = transform;
+            }
         };
     }
 }

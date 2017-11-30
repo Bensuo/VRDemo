@@ -37,7 +37,7 @@ bool Engine::Content::ModelFactory::LoadModel(std::string path)
 	std::cout << "Loading model: " << path << std::endl;
 
 	Assimp::Importer import;
-	const auto scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	const auto scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenNormals);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
@@ -74,7 +74,7 @@ Engine::Rendering::Mesh Engine::Content::ModelFactory::ProcessMesh(aiMesh *mesh,
 	for (GLuint i = 0; i < mesh->mNumVertices; i++)
 	{
 		Rendering::Vertex vertex;
-		glm::vec4 vector;
+		glm::vec3 vector;
 
 		vector.x = mesh->mVertices[i].x;
 		vector.y = mesh->mVertices[i].y;
@@ -137,11 +137,11 @@ Engine::Rendering::Mesh Engine::Content::ModelFactory::ProcessMesh(aiMesh *mesh,
 	if (mesh->mMaterialIndex >= 0)
 	{
 		const auto ai_material = scene->mMaterials[mesh->mMaterialIndex];
-		auto diffuse_maps = LoadMaterialTextures(ai_material, aiTextureType_DIFFUSE, "texture_diffuse", directory);
+		auto diffuse_maps = LoadMaterialTextures(ai_material, aiTextureType_DIFFUSE, "diffuseMap", directory);
 		textures.insert(textures.end(), diffuse_maps.begin(), diffuse_maps.end());
-		auto specular_maps = LoadMaterialTextures(ai_material, aiTextureType_SPECULAR, "texture_specular", directory);
+		auto specular_maps = LoadMaterialTextures(ai_material, aiTextureType_SPECULAR, "normalMap", directory);
 		textures.insert(textures.end(), specular_maps.begin(), specular_maps.end());
-		auto normal_maps = LoadMaterialTextures(ai_material, aiTextureType_HEIGHT, "texture_normals", directory);
+		auto normal_maps = LoadMaterialTextures(ai_material, aiTextureType_HEIGHT, "depthMap", directory);
 		textures.insert(textures.end(), normal_maps.begin(), normal_maps.end());
 
 		aiString ai_name;

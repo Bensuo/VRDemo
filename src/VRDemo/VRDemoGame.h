@@ -1,9 +1,9 @@
 #ifndef BLINNPHONGGAME_H
 #define BLINNPHONGGAME_H
 
+#include "Player.h"
 #include "Game.h"
 #include "Skybox.h"
-#include "Camera.h"
 #include "Light.h"
 #include "Button.h"
 #include <OVR_CAPI_GL.h>
@@ -13,10 +13,11 @@ using namespace Engine;
  */
 class VRDemoGame : public Game
 {
-    Rendering::Camera camera;
+    VRPlayer player;
     Rendering::Model dining_room;
     Rendering::Skybox skybox;
 
+    Rendering::Shader shadow_shader;
     Rendering::Shader blinn_shader;
     Rendering::Shader skybox_shader;
 	Rendering::Shader textured_shader;
@@ -32,8 +33,8 @@ class VRDemoGame : public Game
     Input::Button flash_light_active;
     Input::Button lighting_active;
     Input::Button show_normal_mapping;
-	
-	
+
+    glm::mat4 light_space_matrix;
 
     /**
      * \brief Render a skybox.
@@ -62,6 +63,8 @@ class VRDemoGame : public Game
      */
 
     void Update(const GameTime delta_time) override;
+
+    void RenderScene(const Rendering::Shader & shader);
 
     /**
      * \brief Render the scene.

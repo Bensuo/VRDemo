@@ -19,6 +19,7 @@ namespace Engine
         virtual void SetVec4(const std::string& uniform, const glm::vec4& vector) const = 0;
         virtual void SetVec3(const std::string& uniform, const glm::vec3& vector) const = 0;
         virtual void SetVec2(const std::string& uniform, const glm::vec2& vector) const = 0;
+        virtual GLuint Program() = 0;
     };
 }
 #endif // ISHADER_H

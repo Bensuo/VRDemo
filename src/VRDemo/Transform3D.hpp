@@ -2,46 +2,57 @@
 #define TRANSFORM_3D_HPP
 
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+
 class Transform3D
 {
 public:
 	Transform3D(glm::vec3 pos = glm::vec3(0),
 		glm::vec3 scale = glm::vec3(1.0f),
-		glm::vec3 rotation = glm::vec3(0))
+		glm::quat rotation = glm::quat())
 		: m_position(pos),
 		m_scale(scale),
 		m_rotation(rotation)
 	{
 		
 	}
-	const glm::vec3& GetPosition()
+	const glm::vec3& GetPosition() const
 	{
 		return m_position;
 	}
-	const glm::vec3& GetScale()
+	const glm::vec3& GetScale() const
 	{
 		return m_scale;
 	}
-	const glm::vec3& GetRotation()
+
+	const glm::quat& GetRotation() const
 	{
 		return m_rotation;
 	}
-	void SetPosition(glm::vec3& new_pos)
+
+	void SetPosition(const glm::vec3& new_pos)
 	{
 		m_position = new_pos;
 	}
-	void SetScale(glm::vec3& new_scale)
+
+	void SetScale(const glm::vec3& new_scale)
 	{
 		m_scale = new_scale;
 	}
-	void SetRotation(glm::vec3& new_rotation)
+
+	void SetRotation(const glm::quat& new_rotation)
 	{
 		m_rotation = new_rotation;
 	}
+
+    glm::vec3 GetFrontDirection() const
+    {
+        return m_rotation * glm::vec3(0, 0, -1);
+    }
 private:
 	glm::vec3 m_position;
 	glm::vec3 m_scale;
-	glm::vec3 m_rotation;
+	glm::quat m_rotation;
 };
 
 #endif // TRANSFORM_3D_HPP

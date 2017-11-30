@@ -29,7 +29,7 @@ namespace Engine
     protected:
         Content::ContentLoader content;
         Windowing::Window window;
-		VRSystem vr_system;
+		std::shared_ptr<VRSystem> vr_system;
         Rendering::RenderingEngine rendering_engine;
         Time::GameTimer game_timer;
         ExitCode exit_code;

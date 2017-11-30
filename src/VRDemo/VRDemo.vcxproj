@@ -109,14 +109,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\dev\OculusSDK\LibOVR\Include;..\dev\assimp\common;..\dev\SDL2-devel-2.0.5-VC\SDL2-2.0.5\include;..\dev\glm-0.9.8.3;..\dev\glew-2.0.0-win32\glew-2.0.0\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\dev\glm;..\dev\OVRPlatformSDK\Include;..\dev\OculusSDK\LibOVR\Include;..\dev\assimp\common;..\dev\SDL2-devel-2.0.5-VC\SDL2-2.0.5\include;..\dev\glew-2.0.0-win32\glew-2.0.0\include\;..\dev\OVRAvatarSDK\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;glew32.lib;glu32.lib;opengl32.lib;assimp.lib;SDL2_ttf.lib;libOVR.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\dev\glew-2.0.0-win32\glew-2.0.0\lib\Release\x64;..\dev\SDL2-devel-2.0.5-VC\SDL2-2.0.5\lib\x64;..\dev\assimp\lib64;..\dev\OculusSDK\LibOVR\Lib\Windows\x64\Debug\VS2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;glew32.lib;glu32.lib;opengl32.lib;assimp.lib;SDL2_ttf.lib;libOVR.lib;libovravatar.lib;LibOVRPlatform64_1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\dev\glew-2.0.0-win32\glew-2.0.0\lib\Release\x64;..\dev\SDL2-devel-2.0.5-VC\SDL2-2.0.5\lib\x64;..\dev\assimp\lib64;..\dev\OculusSDK\LibOVR\Lib\Windows\x64\Debug\VS2015;..\dev\OVRAvatarSDK\Windows;..\dev\OVRPlatformSDK\Windows;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -162,6 +162,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Avatar.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Keyboard.cpp" />
@@ -170,8 +171,10 @@
     <ClCompile Include="ModelFactory.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="MouseState.cpp" />
+    <ClCompile Include="OVR_PlatformLoader.cpp" />
     <ClCompile Include="RenderingEngine.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ShaderFactory.cpp" />
     <ClCompile Include="VRDemoGame.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -181,9 +184,11 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Avatar.h" />
     <ClInclude Include="Button.h" />
-    <ClInclude Include="Camera.h" />
     <ClInclude Include="ContentLoader.h" />
+    <ClInclude Include="OvrConversions.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Signal.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Keyboard.h" />

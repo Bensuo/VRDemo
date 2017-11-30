@@ -46,6 +46,8 @@ namespace Engine
 
             void SetMaterial(const Material* light) const;
             void SetBool(const std::string& uniform, bool boolean) const;
+
+            GLuint Program() override;
         };
     }
 }
