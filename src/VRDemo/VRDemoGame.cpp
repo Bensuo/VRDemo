@@ -275,11 +275,11 @@ VRDemoGame::VRDemoGame()
 		GameObject* gameObject = new GameObject();
 		if (i%2)
 		{
-			gameObject->model = content.LoadModel("res/models/testcube/redsphere.obj");
+			gameObject->model = content.LoadModel("res/models/spheres/redsphere.obj");
 		}
 		else
 		{
-			gameObject->model = content.LoadModel("res/models/testcube/bluesphere.obj");
+			gameObject->model = content.LoadModel("res/models/spheres/bluesphere.obj");
 		}
 		
 		gameObject->transform->SetPosition(glm::vec3(0.0f + (-2.0f / 20) * i, 10 + (-3.0f/20) * i, 0 + (-2.0f / 20) * i));
