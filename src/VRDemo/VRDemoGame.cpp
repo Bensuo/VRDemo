@@ -294,12 +294,11 @@ VRDemoGame::VRDemoGame()
 
 	physics_engine.AddRigidBody(*hand_right->rigid_body, COL_HANDS, COL_OBJECTS);
 
-		//dining_room.GetTransform().SetScale(glm::vec3(0.015f));
 }
 
 void VRDemoGame::PhysicsCallback(btDynamicsWorld *world, btScalar timestep)
 {
-	//Limit the camera speed
+	//Since we are in a static method, obtain a pointer to our VRDemoGame to access game data
 	VRDemoGame* game = static_cast<VRDemoGame*>(world->getWorldUserInfo());
 	//cap the camera speed
 	auto vel = game->camera.rigid_body->GetLinearVelocity();
