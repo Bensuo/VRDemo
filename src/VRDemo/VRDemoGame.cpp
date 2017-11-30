@@ -154,7 +154,7 @@ void VRDemoGame::Render()
     auto hand_left_pos = player.GetLeftHandPosWorldspace();
     auto hand_left_dir = player.GetLeftHandDirWorldspace();
 
-    rendering_engine.BeginDepthPass(hand_left_pos, hand_left_dir, 1.0f, 10.0f, 55.0f);
+    rendering_engine.BeginDepthPass(hand_left_pos, hand_left_dir, 1.0f, 30.0f, 55.0f);
     RenderScene(rendering_engine.DepthShader());
     rendering_engine.EndDepthPass();
 
@@ -228,7 +228,7 @@ void VRDemoGame::SetUpLighting()
 }
 
 VRDemoGame::VRDemoGame()
-    : dining_room(content.LoadModel("res/models/living_room.obj")),
+    : dining_room(content.LoadModel("res/models/sponza2/sponza.obj")),
     skybox(content.LoadSkybox("res/textures/right.bmp",
         "res/textures/left.bmp",
         "res/textures/top.bmp",
