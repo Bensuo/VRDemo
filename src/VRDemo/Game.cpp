@@ -58,12 +58,12 @@ namespace Engine
         rendering_engine(vr_system),
         vr_system(std::make_shared<VRSystem>())
     {
-        vr_system.CreateSessionFail.Connect([&]() 
+        vr_system->CreateSessionFail.Connect([&]() 
         {
             Quit(Error);
         });
 
-        vr_system.InitialiseFail.Connect([&]()
+        vr_system->InitialiseFail.Connect([&]()
         {
             Quit(Error);
         });
@@ -72,6 +72,7 @@ namespace Engine
         {
             Quit(Success);
         });
+
 		vr_system->Init();
     }
 

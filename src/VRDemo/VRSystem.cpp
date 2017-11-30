@@ -9,6 +9,12 @@
 #include <OVR_Avatar.h>
 
 VRSystem::VRSystem()
+{}
+
+VRSystem::~VRSystem()
+{}
+
+void VRSystem::Init()
 {
     const char* TEST_APP_ID = "958062084316416";
 
@@ -17,31 +23,6 @@ VRSystem::VRSystem()
         std::cout << "OVR FAILED INIT" << std::endl;
     }
 
-    if (OVR_FAILURE(ovr_Initialize(nullptr)))
-    {
-        std::cout << "OVR FAILED INIT" << std::endl;
-    }
-
-	if (OVR_FAILURE(ovr_Create(&session, &luid)))
-	{
-		ovr_Shutdown();
-		std::cout << "OVR ERROR SHUTTING DOWN" << std::endl;
-		return;
-	}
-
-	hmd_desc = ovr_GetHmdDesc(session);	
-
-	ovr_SetTrackingOriginType(session, ovrTrackingOrigin_FloorLevel);
-
-    m_avatar = Avatar(session);
-}
-
-VRSystem::~VRSystem()
-{
-}
-
-void VRSystem::Init()
-{
     //Init vr
     ovrResult result = ovr_Initialize(nullptr);
     if (OVR_FAILURE(result))
@@ -64,6 +45,8 @@ void VRSystem::Init()
     hmd_desc = ovr_GetHmdDesc(session);
 
     ovr_SetTrackingOriginType(session, ovrTrackingOrigin_FloorLevel);
+
+    m_avatar = Avatar(session);
 
 	//Setup texture and depth buffers
 	for (int eye = 0; eye < 2; eye++)
