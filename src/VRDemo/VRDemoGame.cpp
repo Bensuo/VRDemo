@@ -88,9 +88,9 @@ void VRDemoGame::HandleInput()
     const auto& right_axis = vr_input_state.GetRight().ThumbstickAxis;
     player.RotateFromAxes(right_axis.x, right_axis.y);
     player.MoveFromAxes(left_axis.x, left_axis.y);
-	hand_left->transform->SetPosition(glm::vec3( glm::vec4(vr_input_state.GetLeft().Transform.GetPosition(), 1)*camera.Yaw() ) + camera.Position());
+	hand_left->transform->SetPosition(player.GetLeftHandPosWorldspace());
 	hand_left->rigid_body->Activate();
-	hand_right->transform->SetPosition(glm::vec3(glm::vec4(vr_input_state.GetRight().Transform.GetPosition(), 1)*camera.Yaw()) + camera.Position());
+	hand_right->transform->SetPosition(player.GetRightHandPosWorldspace());
 	hand_right->rigid_body->Activate();
 }
 
@@ -108,14 +108,17 @@ void VRDemoGame::RenderScene(const Rendering::Shader& shader)
 {
     rendering_engine.Begin(shader);
     {
-        dining_room.Draw(rendering_engine);
+		for (auto object : game_objects)
+		{
+			object->Draw(rendering_engine);
+		}
     }
     rendering_engine.End();
 }
 
 void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
 {
-    point_light.Position = player.GetPlayerTransform().GetPosition();
+    point_light.Position = player.GetPlayerTransform()->GetPosition();
     flash_light.Position = player.GetLeftHandPosWorldspace();
     flash_light.Direction = player.GetLeftHandDirWorldspace();
 
@@ -185,7 +188,7 @@ void VRDemoGame::Render()
 
 void VRDemoGame::SetUpLighting()
 {
-    point_light.Position = player.GetPlayerTransform().GetPosition();
+    point_light.Position = player.GetPlayerTransform()->GetPosition();
     point_light.Ambient = glm::vec3(0.0333, 0.0333, 0.0333);
     point_light.Diffuse = glm::vec3(1.0, 0.65, 0.45);
     point_light.Specular = glm::vec3(1.0, 1.0, 1.0);
@@ -238,7 +241,7 @@ void VRDemoGame::SetUpLighting()
 }
 
 VRDemoGame::VRDemoGame()
-    : dining_room(content.LoadModel("res/models/sponza2/sponza.obj")),
+    : //dining_room(content.LoadModel("res/models/sponza2/sponza.obj")),
     skybox(content.LoadSkybox("res/textures/right.bmp",
         "res/textures/left.bmp",
         "res/textures/top.bmp",
@@ -251,32 +254,31 @@ VRDemoGame::VRDemoGame()
     blinn_phong(true),
     lighting_active(true),
     show_normal_mapping(true),
-    player(vr_system)
+    player(vr_system, glm::vec3(0, 5.0f, 0))
 {
-    Transform3D transform;
-    transform.SetPosition(glm::vec3(0, 2.5, 0));
-    player.SetTransform(transform);
+
+
     SetUpLighting();
-    glm::vec3 pos(-2.0f, 0.0f, 2.0f);
-    glm::vec3 scale(1.0f);
-    glm::quat rot;
-    dining_room.SetTransform(Transform3D(pos, scale, rot));
+    //glm::vec3 pos(-2.0f, 0.0f, 2.0f);
+    //glm::vec3 scale(1.0f);
+    //glm::quat rot;
+    //dining_room.SetTransform(Transform3D(pos, scale, rot));
     shadow_shader.Use();
     shadow_shader.SetInt("shadowMap", 30);
 	game_objects.emplace_back(new GameObject());
 	game_objects[0]->model = content.LoadModel("res/models/sponza2/sponza.obj");
-	game_objects[0]->transform->SetScale(glm::vec3(3.0f));
-	game_objects[0]->rigid_body = new RigidBodyMesh(content.LoadCollisionMesh("res/models/sponza2/sponza.obj"), glm::vec3(3.0f), glm::vec3(0));
+	game_objects[0]->transform->SetScale(glm::vec3(1.2f));
+	game_objects[0]->rigid_body = new RigidBodyMesh(content.LoadCollisionMesh("res/models/sponza2/sponza.obj"), glm::vec3(1.2f), glm::vec3(0));
 	game_objects[0]->rigid_body->SetRestitution(1.0f);
 	physics_engine.AddRigidBody(*(game_objects[0]->rigid_body), COL_SCENE, COL_OBJECTS);
-	physics_engine.AddRigidBody(*camera.rigid_body, COL_OBJECTS, COL_SCENE | COL_OBJECTS);
-	for (size_t i = 1; i < 50; i++)
+	physics_engine.AddRigidBody(*player.GetRigidBody(), COL_OBJECTS, COL_SCENE | COL_OBJECTS);
+	for (size_t i = 1; i < 20; i++)
 	{
 		GameObject* gameObject = new GameObject();
 		//GameObject& gameObject = game_objects[i];
 		gameObject->model = content.LoadModel("res/models/testcube/testsphere.obj");
-		gameObject->transform->SetPosition(glm::vec3(0.0f, 100, 0));
-		gameObject->transform->SetScale(glm::vec3(0.5f + (0.5f/50)*i));
+		gameObject->transform->SetPosition(glm::vec3(0.0f + (-2.0f / 20) * i, 10 + (-3.0f/20) * i, 0 + (-2.0f / 20) * i));
+		gameObject->transform->SetScale(glm::vec3(0.3f + (0.5f/20)*i));
 		gameObject->id = "sphere";
 		gameObject->is_destructable = i % 2;
 		gameObject->rigid_body = new RigidBodySphere(1.0f, 2.0f, gameObject->transform);
@@ -284,12 +286,15 @@ VRDemoGame::VRDemoGame()
 		gameObject->rigid_body->SetDamping(0.1f, 0.2f);
 		gameObject->rigid_body->SetUserPointer(static_cast<void*>(gameObject));
 		physics_engine.AddRigidBody(*(gameObject->rigid_body), COL_OBJECTS, COL_SCENE | COL_OBJECTS | COL_HANDS);
+		float delta = 50000.0f / 20;
+		gameObject->rigid_body->Activate();
+		gameObject->rigid_body->ApplyCentralForce(delta*i, delta*i, delta*i);
 		game_objects.push_back(gameObject);
 	}
 	physics_engine.SetInternalTickCallback(PhysicsCallback, static_cast<void*>(this));
 	hand_left = new GameObject();
 	hand_left->id = "hands";
-	hand_left->transform->SetPosition(camera.Yaw() * vr_system.GetInputState().GetLeft().Transform.GetPosition() + camera.Position());
+	hand_left->transform->SetPosition(player.GetLeftHandPosWorldspace());
 	hand_left->transform->SetScale(glm::vec3(0.1f));
 	hand_left->rigid_body = new KinematicSphere(1.0f,hand_left->transform);
 	hand_left->rigid_body->SetUserPointer(static_cast<void*>(hand_left));
@@ -297,7 +302,7 @@ VRDemoGame::VRDemoGame()
 	physics_engine.AddRigidBody(*hand_left->rigid_body, COL_HANDS, COL_OBJECTS);
 	hand_right = new GameObject();
 	hand_right->id = "hands";
-	hand_right->transform->SetPosition(camera.Yaw() * vr_system.GetInputState().GetLeft().Transform.GetPosition() + camera.Position());
+	hand_right->transform->SetPosition(player.GetLeftHandPosWorldspace());
 	hand_right->transform->SetScale(glm::vec3(0.1f));
 	hand_right->rigid_body = new KinematicSphere(1.0f, hand_right->transform);
 	hand_right->rigid_body->SetUserPointer(static_cast<void*>(hand_right));
@@ -311,14 +316,14 @@ void VRDemoGame::PhysicsCallback(btDynamicsWorld *world, btScalar timestep)
 	//Since we are in a static method, obtain a pointer to our VRDemoGame to access game data
 	VRDemoGame* game = static_cast<VRDemoGame*>(world->getWorldUserInfo());
 	//cap the camera speed
-	auto vel = game->camera.rigid_body->GetLinearVelocity();
+	auto vel = game->player.GetRigidBody()->GetLinearVelocity();
 	btVector3 velocity = btVector3(vel.x, vel.y, vel.z);
 	glm::vec2 v2{ velocity.getX(), velocity.getZ() };
 	btScalar speed = glm::length(v2);
 	if (speed > 5.0f)
 	{
 		v2 *= 5.0f / speed;
-		game->camera.rigid_body->SetLinearVelocity(v2.x, velocity.getY(), v2.y);
+		game->player.GetRigidBody()->SetLinearVelocity(v2.x, velocity.getY(), v2.y);
 	}
 
 	//Find contacts between hands and spheres and delete as appropriate

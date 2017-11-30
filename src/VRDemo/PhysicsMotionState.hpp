@@ -33,10 +33,16 @@ public:
 	{
 		//If game object is null
 		//return early
-		auto pos = worldTrans.getOrigin();
-		m_object_transform->SetPosition(glm::vec3(pos.getX(), pos.getY(), pos.getZ()));
-		auto rot = worldTrans.getRotation();
-		m_object_transform->SetRotation(glm::quat(rot.getX(), rot.getY(), rot.getZ(), rot.getW()));
+		if (m_object_transform->SyncPosition())
+		{
+			auto pos = worldTrans.getOrigin();
+			m_object_transform->SetPosition(glm::vec3(pos.getX(), pos.getY(), pos.getZ()));
+		}
+		if (m_object_transform->SyncRotation())
+		{
+			auto rot = worldTrans.getRotation();
+			m_object_transform->SetRotation(glm::quat(rot.getX(), rot.getY(), rot.getZ(), rot.getW()));
+		}
 
 	}
 };

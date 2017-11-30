@@ -76,14 +76,15 @@ namespace Engine
         });
 
 		vr_system->Init();
+		physics_engine.SetGravity(0, -10.0f, 0);
+		physics_engine.SetMaxSubsteps(10);
     }
 
     int Game::Run()
     {
         //start game & run game loop
         GameLoop();
-		physics_engine.SetGravity(0, -10.0f, 0);
-		physics_engine.SetMaxSubsteps(10);
+
         return exit_code;
     }
 }

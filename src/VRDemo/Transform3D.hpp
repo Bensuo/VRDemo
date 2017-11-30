@@ -12,7 +12,9 @@ public:
 		glm::quat rotation = glm::quat())
 		: m_position(pos),
 		m_scale(scale),
-		m_rotation(rotation)
+		m_rotation(rotation),
+		sync_rotation(true),
+		sync_position(true)
 	{
 		
 	}
@@ -46,7 +48,25 @@ public:
     {
         return m_rotation * glm::vec3(0, 0, -1);
     }
+	void SetSyncRotation(bool val)
+	{
+		sync_rotation = val;
+	}
+	bool SyncRotation() const
+	{
+		return sync_rotation;
+	}
+	void SetSyncPosition(bool val)
+	{
+		sync_position = val;
+	}
+	bool SyncPosition() const
+	{
+		return sync_position;
+	}
 private:
+	bool sync_position;
+	bool sync_rotation;
 	glm::vec3 m_position;
 	glm::vec3 m_scale;
 	glm::quat m_rotation;
