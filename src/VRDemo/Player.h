@@ -125,9 +125,9 @@ namespace Engine
             {
 				rigid_body->Activate();
 				glm::vec3 new_front = movement_vectors.Front * axes.y * movement_speed;
-				rigid_body->ApplyCentralForce(new_front.x, new_front.y, new_front.z);
+				rigid_body->ApplyCentralForce(new_front.x, 0, new_front.z);
 				glm::vec3 new_right = movement_vectors.Right * axes.x * movement_speed;
-				rigid_body->ApplyCentralForce(new_right.x, new_right.y, new_right.z);
+				rigid_body->ApplyCentralForce(new_right.x, 0, new_right.z);
             }
         }
 
@@ -144,7 +144,7 @@ namespace Engine
             //movement_vectors.Movement_Dir += movement_vectors.Front;
 			auto new_front = movement_vectors.Front * movement_speed;
 			rigid_body->Activate();
-			rigid_body->ApplyCentralForce(new_front.x, new_front.y, new_front.z);
+			rigid_body->ApplyCentralForce(new_front.x, 0, new_front.z);
         }
 
         void MoveBackward()
@@ -152,7 +152,7 @@ namespace Engine
             //movement_vectors.Movement_Dir -= movement_vectors.Front;
 			auto new_front = -movement_vectors.Front * movement_speed;
 			rigid_body->Activate();
-			rigid_body->ApplyCentralForce(new_front.x, new_front.y, new_front.z);
+			rigid_body->ApplyCentralForce(new_front.x, 0, new_front.z);
         }
 
         void MoveLeft()
@@ -160,7 +160,7 @@ namespace Engine
            //movement_vectors.Movement_Dir -= movement_vectors.Right;
 			auto new_right = -movement_vectors.Right * movement_speed;
 			rigid_body->Activate();
-			rigid_body->ApplyCentralForce(new_right.x, new_right.y, new_right.z);
+			rigid_body->ApplyCentralForce(new_right.x, 0, new_right.z);
         }
 
         void MoveRight()
@@ -168,7 +168,7 @@ namespace Engine
             //movement_vectors.Movement_Dir += movement_vectors.Right;
 			auto new_right = movement_vectors.Right * movement_speed;
 			rigid_body->Activate();
-			rigid_body->ApplyCentralForce(new_right.x, new_right.y, new_right.z);
+			rigid_body->ApplyCentralForce(new_right.x, 0, new_right.z);
         }
     };
 }
