@@ -259,56 +259,61 @@ VRDemoGame::VRDemoGame()
 
 
     SetUpLighting();
-    //glm::vec3 pos(-2.0f, 0.0f, 2.0f);
-    //glm::vec3 scale(1.0f);
-    //glm::quat rot;
-    //dining_room.SetTransform(Transform3D(pos, scale, rot));
+
     shadow_shader.Use();
     shadow_shader.SetInt("shadowMap", 30);
+	//Setting up a game object for our scene geometry
 	game_objects.emplace_back(new GameObject());
 	game_objects[0]->model = content.LoadModel("res/models/sponza2/sponza.obj");
 	game_objects[0]->transform->SetScale(glm::vec3(1.2f));
 	game_objects[0]->rigid_body = new RigidBodyMesh(content.LoadCollisionMesh("res/models/sponza2/sponza.obj"), glm::vec3(1.2f), glm::vec3(0));
 	game_objects[0]->rigid_body->SetRestitution(1.0f);
 	physics_engine.AddRigidBody(*(game_objects[0]->rigid_body), COL_SCENE, COL_OBJECTS);
-	physics_engine.AddRigidBody(*player.GetRigidBody(), COL_OBJECTS, COL_SCENE | COL_OBJECTS);
+
 	for (size_t i = 1; i < 20; i++)
 	{
 		GameObject* gameObject = new GameObject();
-		//GameObject& gameObject = game_objects[i];
-		gameObject->model = content.LoadModel("res/models/testcube/testsphere.obj");
+		if (i%2)
+		{
+			gameObject->model = content.LoadModel("res/models/testcube/redsphere.obj");
+		}
+		else
+		{
+			gameObject->model = content.LoadModel("res/models/testcube/bluesphere.obj");
+		}
+		
 		gameObject->transform->SetPosition(glm::vec3(0.0f + (-2.0f / 20) * i, 10 + (-3.0f/20) * i, 0 + (-2.0f / 20) * i));
-		gameObject->transform->SetScale(glm::vec3(0.3f + (0.5f/20)*i));
+		gameObject->transform->SetScale(glm::vec3(0.5f + (0.5f/20)*i));
 		gameObject->id = "sphere";
 		gameObject->is_destructable = i % 2;
-		gameObject->rigid_body = new RigidBodySphere(1.0f, 2.0f, gameObject->transform);
-		gameObject->rigid_body->SetRestitution(0.7f);
+		gameObject->rigid_body = new RigidBodySphere(1.0f, 5.0f, gameObject->transform);
+		gameObject->rigid_body->SetRestitution(0.8f);
 		gameObject->rigid_body->SetDamping(0.1f, 0.2f);
 		gameObject->rigid_body->SetUserPointer(static_cast<void*>(gameObject));
 		physics_engine.AddRigidBody(*(gameObject->rigid_body), COL_OBJECTS, COL_SCENE | COL_OBJECTS | COL_HANDS);
-		float delta = 50000.0f / 20;
-		gameObject->rigid_body->Activate();
-		gameObject->rigid_body->ApplyCentralForce(delta*i, delta*i, delta*i);
 		game_objects.push_back(gameObject);
 	}
-	physics_engine.SetInternalTickCallback(PhysicsCallback, static_cast<void*>(this));
+	//Setting up game objects for the collision spheres at the hands
 	hand_left = new GameObject();
 	hand_left->id = "hands";
 	hand_left->transform->SetPosition(player.GetLeftHandPosWorldspace());
 	hand_left->transform->SetScale(glm::vec3(0.1f));
 	hand_left->rigid_body = new KinematicSphere(1.0f,hand_left->transform);
 	hand_left->rigid_body->SetUserPointer(static_cast<void*>(hand_left));
-
 	physics_engine.AddRigidBody(*hand_left->rigid_body, COL_HANDS, COL_OBJECTS);
+
 	hand_right = new GameObject();
 	hand_right->id = "hands";
 	hand_right->transform->SetPosition(player.GetLeftHandPosWorldspace());
 	hand_right->transform->SetScale(glm::vec3(0.1f));
 	hand_right->rigid_body = new KinematicSphere(1.0f, hand_right->transform);
 	hand_right->rigid_body->SetUserPointer(static_cast<void*>(hand_right));
-
 	physics_engine.AddRigidBody(*hand_right->rigid_body, COL_HANDS, COL_OBJECTS);
 
+	//Add the player's rigid body to the engine
+	physics_engine.AddRigidBody(*player.GetRigidBody(), COL_OBJECTS, COL_SCENE | COL_OBJECTS);
+
+	physics_engine.SetInternalTickCallback(PhysicsCallback, static_cast<void*>(this));
 }
 
 void VRDemoGame::PhysicsCallback(btDynamicsWorld *world, btScalar timestep)
@@ -334,6 +339,7 @@ void VRDemoGame::PhysicsCallback(btDynamicsWorld *world, btScalar timestep)
 		btPersistentManifold* contactManifold = world->getDispatcher()->getManifoldByIndexInternal(i);
 		const btCollisionObject* obA = contactManifold->getBody0();
 		const btCollisionObject* obB = contactManifold->getBody1();
+		//Get user pointers for each object to get access to object info
 		GameObject* ob_a = static_cast<GameObject*>(obA->getUserPointer());
 		GameObject* ob_b = static_cast<GameObject*>(obB->getUserPointer());
 		int numContacts = contactManifold->getNumContacts();
@@ -344,8 +350,10 @@ void VRDemoGame::PhysicsCallback(btDynamicsWorld *world, btScalar timestep)
 			{
 				if (ob_a && ob_b)
 				{
+					//Check for a collision between either hands and spheres
 					if (ob_b->id == "hands" && ob_a->id == "sphere" && ob_a->is_destructable)
 					{
+						//Mark them for deletion if the sphere is destructable
 						for_deletion.push_back(ob_a);
 					}
 				}
@@ -353,6 +361,8 @@ void VRDemoGame::PhysicsCallback(btDynamicsWorld *world, btScalar timestep)
 		}
 
 	}
+
+	//Delete the spheres which have been marked for deletion
 	for (int i = 0; i < for_deletion.size(); ++i)
 	{
 		
@@ -368,4 +378,12 @@ void VRDemoGame::PhysicsCallback(btDynamicsWorld *world, btScalar timestep)
 		}
 	}
 
+}
+
+VRDemoGame::~VRDemoGame()
+{
+	//for (int i = 0; i < game_objects.size(); ++i)
+	//{
+	//	delete game_objects[i];
+	//}
 }

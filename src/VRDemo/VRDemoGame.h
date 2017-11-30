@@ -97,6 +97,7 @@ public:
      * \brief Load the game's content & set up the scene.
      */
     VRDemoGame();
+	~VRDemoGame();
 };
 
 #endif // BLINNPHONGGAME_H
