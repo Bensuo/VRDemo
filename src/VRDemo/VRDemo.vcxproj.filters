@@ -64,6 +64,9 @@
     <Filter Include="Engine\Rendering\Player">
       <UniqueIdentifier>{c7202f1b-c231-4304-a8ff-537ae641c8f5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Physics">
+      <UniqueIdentifier>{fafccb17-e8a9-4e3b-b9d2-458973fff408}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -123,6 +126,12 @@
     </ClCompile>
     <ClCompile Include="OVR_PlatformLoader.cpp">
       <Filter>Engine\VR</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsEngine.cpp">
+      <Filter>Engine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionMeshFactory.cpp">
+      <Filter>Engine\Content\Factories</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -236,6 +245,39 @@
     </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>Engine\Rendering\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsEngine.hpp">
+      <Filter>Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsMotionState.hpp">
+      <Filter>Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBody.hpp">
+      <Filter>Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBodyMesh.hpp">
+      <Filter>Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBodyPlane.hpp">
+      <Filter>Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBodySphere.hpp">
+      <Filter>Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionMesh.hpp">
+      <Filter>Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionMeshFactory.hpp">
+      <Filter>Engine\Content\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBodyBox.hpp">
+      <Filter>Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.hpp">
+      <Filter>Engine\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="KinematicSphere.hpp">
+      <Filter>Engine\Physics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

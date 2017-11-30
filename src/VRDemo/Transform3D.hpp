@@ -29,17 +29,14 @@ public:
 	{
 		return m_rotation;
 	}
-
 	void SetPosition(const glm::vec3& new_pos)
 	{
 		m_position = new_pos;
 	}
-
 	void SetScale(const glm::vec3& new_scale)
 	{
 		m_scale = new_scale;
 	}
-
 	void SetRotation(const glm::quat& new_rotation)
 	{
 		m_rotation = new_rotation;

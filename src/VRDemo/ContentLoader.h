@@ -5,6 +5,7 @@
 #include "ModelFactory.h"
 #include "ShaderFactory.h"
 #include "TextureFactory.h"
+#include "CollisionMeshFactory.hpp"
 
 namespace Engine
 {
@@ -19,6 +20,7 @@ namespace Engine
             SkyboxFactory skybox_factory;
             ModelFactory model_factory{*this};
 			TextureFactory texture_factory;
+			CollisionMeshFactory collision_mesh_factory{*this};
 
         public:
             /**
@@ -66,6 +68,10 @@ namespace Engine
 			Rendering::Texture& LoadTexture(const std::string& path)
             {
 				return texture_factory.Load(path);
+            }
+			CollisionMesh& LoadCollisionMesh(const std::string& path)
+            {
+				return collision_mesh_factory.Load(path);
             }
         };
     }

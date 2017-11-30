@@ -24,6 +24,10 @@ namespace Engine
             const std::vector<GLuint>& GetIndices() const override;
             const Material& GetMaterial() const override;
             void Draw(const IRenderingEngine& rendering_engine) override;
+			std::vector<Vertex>& GetVertices()
+			{
+				return vertices;
+			}
         private:
             GLuint vao, vbo, ebo;
             std::vector<Vertex> vertices;

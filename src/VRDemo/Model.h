@@ -20,6 +20,11 @@ namespace Engine
             {
                 this->meshes = meshes;
             }
+			Model(const std::vector<Mesh>& meshes, Transform3D& initial_transform)
+            {
+				this->meshes = meshes;
+				this->transform = initial_transform;
+            }
             void Draw(IRenderingEngine& rendering_engine) override;
 			Transform3D& GetTransform()
 			{
@@ -30,6 +35,10 @@ namespace Engine
             {
                 this->transform = transform;
             }
+			std::vector<Mesh>& GetMeshes()
+			{
+				return meshes;
+			}
         };
     }
 }
