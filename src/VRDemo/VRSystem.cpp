@@ -106,11 +106,11 @@ void VRSystem::BeginFrame()
 
 	ovrPosef HmdToEyePose[2] = { eyeRenderDesc[0].HmdToEyePose,
 		eyeRenderDesc[1].HmdToEyePose };
-	// sensorSampleTime is fed into the layer later
+
 	//layer init
 	layer = ovrLayerEyeFov();
 	layer.Header.Type = ovrLayerType_EyeFov;
-	layer.Header.Flags = ovrLayerFlag_TextureOriginAtBottomLeft; //Because opengl
+	layer.Header.Flags = ovrLayerFlag_TextureOriginAtBottomLeft;
 	layer.ColorTexture[0] = eye_render_texture[0]->TextureChain;
 	layer.ColorTexture[1] = eye_render_texture[1]->TextureChain;
 	layer.Fov[0] = eyeRenderDesc[0].Fov;
@@ -135,7 +135,6 @@ void VRSystem::EndFrame()
     
     ovrResult result = ovr_EndFrame(session, 0, nullptr, &layers, 1);
 
-	//frameIndex++;
 }
 
 void VRSystem::ClearEyeBuffer(int eye)
@@ -151,10 +150,9 @@ void VRSystem::CommitBuffer(int eye)
 
 void VRSystem::RenderMirror(int w, int h)
 {
-	// Blit mirror texture to back buffer
+	// Blits our mirror texture to the back buffer
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, mirror_fbo);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	//glDrawBuffer(GL_BACK);
 	glBlitFramebuffer(0, h, w, 0,
 		0, 0, w, h,
 		GL_COLOR_BUFFER_BIT, GL_NEAREST);
