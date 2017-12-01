@@ -36,8 +36,7 @@ class VRDemoGame : public Game
     Rendering::Shader blinn_shader;
     Rendering::Shader skybox_shader;
 	Rendering::Shader textured_shader;
-	std::vector<Rendering::Model> cubes;
-	std::vector<RigidBodyBox*> cubes_bodies;
+
 	GameObject* hand_left;
 	GameObject* hand_right;
     Rendering::SpotLight flash_light;

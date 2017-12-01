@@ -30,6 +30,7 @@ bool CollisionMeshFactory::LoadCollisionMesh(const std::string &path)
 	auto& model = m_manager.LoadModel(path);
 	auto& meshes = model.GetMeshes();
 	btTriangleMesh triangle_mesh;
+	std::vector<float*> vpos_data;
 	for (auto& mesh : meshes)
 	{
 		auto& verts = mesh.GetVertices();
@@ -49,13 +50,14 @@ bool CollisionMeshFactory::LoadCollisionMesh(const std::string &path)
 		indexed_mesh.m_vertexStride = 3*sizeof(float);
 		indexed_mesh.m_vertexType = PHY_FLOAT;
 		indexed_mesh.m_triangleIndexBase = reinterpret_cast<const unsigned char*>(mesh.GetIndices().data());
-		//TODO: This almost certainly causes a leak, fix later
 		float* data = new float[vpos.size()];
 		std::copy(vpos.begin(), vpos.end(), data);
 		indexed_mesh.m_vertexBase = reinterpret_cast<unsigned char*>(data);
 		triangle_mesh.addIndexedMesh(indexed_mesh);
+		vpos_data.push_back(data);
 	}
 	resources.emplace(path, triangle_mesh);
+	resources[path].vpos_data = vpos_data;
 	return true;
 }
 
