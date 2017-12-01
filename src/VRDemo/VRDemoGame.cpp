@@ -176,9 +176,9 @@ void VRDemoGame::Render()
 	for (int i = 0; i < 2; ++i)
 	{
 		rendering_engine.ClearEyeBuffer(i);
-		//RenderSkybox(skybox_shader, i);
+		RenderSkybox(skybox_shader, i);
 		RenderScene(shadow_shader, i);
-        //vr_system.DrawAvatar(vr_system.GetViewFromEye(i), vr_system.GetProjectionMatrix(i), vr_system.EyePos(i));
+        vr_system->DrawAvatar(vr_system->GetViewFromEye(i), vr_system->GetProjectionMatrix(i), vr_system->GetEyePos(i));
 		rendering_engine.Commit(i);
 	}
 	rendering_engine.EndRender();

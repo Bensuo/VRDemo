@@ -258,6 +258,7 @@ namespace Engine
         {
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glDepthMask(GL_TRUE);
 
             glm::mat4 lightProjection = glm::perspective(glm::radians(fov), (GLfloat)shadow_map_data.ShadowWidth / (GLfloat)shadow_map_data.ShadowHeight, near_plane, far_plane);
 
@@ -278,6 +279,7 @@ namespace Engine
         {
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             glCullFace(GL_BACK);
+            glDepthMask(GL_FALSE);
         }
     }
 }
