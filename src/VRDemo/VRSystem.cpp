@@ -87,6 +87,15 @@ void VRSystem::Init()
 	glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mirror_tex_id, 0);
 	glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+
+	ovrSessionStatus status;
+	ovr_GetSessionStatus(session, &status);
+	while (!status.HmdMounted)
+	{
+		ovr_GetSessionStatus(session, &status);
+	}
+	ovr_RecenterTrackingOrigin(session);
+
 }
 
 void VRSystem::BeginFrame()
