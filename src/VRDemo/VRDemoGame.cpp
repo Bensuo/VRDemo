@@ -261,7 +261,7 @@ VRDemoGame::VRDemoGame()
     SetUpLighting();
 
     shadow_shader.Use();
-    shadow_shader.SetInt("shadowMap", 30);
+    shadow_shader.SetInt("shadowMap", 20);
 	//Setting up a game object for our scene geometry
 	game_objects.emplace_back(new GameObject());
 	game_objects[0]->model = content.LoadModel("res/models/sponza2/sponza.obj");

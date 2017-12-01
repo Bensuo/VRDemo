@@ -92,8 +92,12 @@ namespace Engine
 
             this->current_shader.Use();
             this->current_shader.SetMat4("lightSpaceMatrix", shadow_map_data.LightSpaceMatrix);
-            glActiveTexture(GL_TEXTURE30);
+
+            glActiveTexture(GL_TEXTURE20);
             glBindTexture(GL_TEXTURE_2D, shadow_map_data.DepthMap);
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, 0);
 
             PushMatrix();
         }
