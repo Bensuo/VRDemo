@@ -45,11 +45,11 @@ class VRDemoGame : public Game
 
     std::vector<Rendering::SpotLight> spot_lights;
 
-    Input::Button lamps_active;
     Input::Button blinn_phong;
     Input::Button flash_light_active;
     Input::Button lighting_active;
     Input::Button show_normal_mapping;
+    Input::Button show_parallax_mapping;
 
     glm::mat4 light_space_matrix;
 
