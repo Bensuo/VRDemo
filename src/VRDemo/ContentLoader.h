@@ -1,6 +1,13 @@
 #ifndef CONTENT_LOADER_H
 #define CONTENT_LOADER_H
 
+/*
+* Names: Stuart Adams and Ben Tracy
+* Student IDs: B00265262 & B00307589
+*
+* Acknowledgements: Code is based on Stuart Adams' individual coursework for Advanced Graphics but has been extended for this project's new features
+*/
+
 #include "SkyboxFactory.h"
 #include "ModelFactory.h"
 #include "ShaderFactory.h"
