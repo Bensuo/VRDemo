@@ -1,3 +1,10 @@
+/*
+ * Names: Stuart Adams and Ben Tracy
+ * Student IDs: B00265262 & B00307589
+ * 
+ * Acknowledgements: This code was developed as part of our Computer Games Tech Project
+ */
+
 #ifndef PHYSICS_ENGINE_HPP
 #define PHYSICS_ENGINE_HPP
 #include <btBulletDynamicsCommon.h>

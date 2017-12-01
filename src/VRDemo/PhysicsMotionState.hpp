@@ -1,3 +1,9 @@
+/*
+* Names: Stuart Adams and Ben Tracy
+* Student IDs: B00265262 & B00307589
+*
+* Acknowledgements: This code was developed as part of our Computer Games Tech Project
+*/
 #ifndef PHYSICS_MOTION_STATE_HPP
 #define PHYSICS_MOTION_STATE_HPP
 #include <LinearMath/btMotionState.h>
@@ -10,7 +16,6 @@ protected:
 	Transform3D* m_object_transform;
 	std::string name;
 public:
-	//TODO: Add game object pointer to constructor
 	PhysicsMotionState(Transform3D *transform, std::string name)
 		: m_object_transform(transform),
 		name(name)
@@ -31,8 +36,7 @@ public:
 	}
 	void setWorldTransform(const btTransform &worldTrans) override
 	{
-		//If game object is null
-		//return early
+
 		if (m_object_transform->SyncPosition())
 		{
 			auto pos = worldTrans.getOrigin();

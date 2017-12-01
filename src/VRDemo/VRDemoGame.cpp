@@ -270,6 +270,7 @@ VRDemoGame::VRDemoGame()
 	game_objects[0]->rigid_body->SetRestitution(1.0f);
 	physics_engine.AddRigidBody(*(game_objects[0]->rigid_body), COL_SCENE, COL_OBJECTS);
 
+	//Add our red and blue spheres
 	for (size_t i = 1; i < 20; i++)
 	{
 		GameObject* gameObject = new GameObject();

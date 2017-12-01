@@ -1,3 +1,9 @@
+/*
+* Names: Stuart Adams and Ben Tracy
+* Student IDs: B00265262 & B00307589
+*
+* Acknowledgements: This code was developed as part of our Computer Games Tech Project
+*/
 #ifndef COLLISION_MESH_LOADER_HPP
 #define COLLISION_MESH_LOADER_HPP
 

@@ -43,7 +43,6 @@ bool CollisionMeshFactory::LoadCollisionMesh(const std::string &path)
 		}
 		auto& indices = mesh.GetIndices();
 		btIndexedMesh indexed_mesh;
-		//indexed_mesh.m_indexType = PHY_INTEGER;
 		indexed_mesh.m_numTriangles = indices.size() / 3;
 		indexed_mesh.m_numVertices = vpos.size()/3;
 		indexed_mesh.m_triangleIndexStride = 3*sizeof(int);
