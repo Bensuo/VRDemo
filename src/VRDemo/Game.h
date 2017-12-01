@@ -7,6 +7,14 @@
 #include "RenderingEngine.h"
 #include <OVR_CAPI_GL.h>
 #include "PhysicsEngine.hpp"
+
+/*
+* Names: Stuart Adams and Ben Tracy
+* Student IDs: B00265262 & B00307589
+*
+* Acknowledgements: Code is based on Stuart Adams' individual coursework for Advanced Graphics but has been extended for this project's new features
+*/
+
 namespace Engine
 {
     enum ExitCode
@@ -29,10 +37,10 @@ namespace Engine
     protected:
         Content::ContentLoader content;
         Windowing::Window window;
-		std::shared_ptr<VRSystem> vr_system;
+        std::shared_ptr<VRSystem> vr_system;
         Rendering::RenderingEngine rendering_engine;
         Time::GameTimer game_timer;
-		Physics::PhysicsEngine physics_engine;
+        Physics::PhysicsEngine physics_engine;
         ExitCode exit_code;
 
         /**
