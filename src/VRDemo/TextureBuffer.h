@@ -2,6 +2,11 @@
 #include <OVR_CAPI_GL.h>
 #include <GL/glew.h>
 
+/*
+* Names: Stuart Adams and Ben Tracy
+* Student IDs: B00265262 & B00307589
+*/
+
 struct TextureBuffer
 {
 	ovrSession          Session;

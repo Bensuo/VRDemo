@@ -1,6 +1,14 @@
 #ifndef TEXTURE_FACTORY_H
 #define TEXTURE_FACTORY_H
 #include <map>
+
+/*
+* Names: Stuart Adams and Ben Tracy
+* Student IDs: B00265262 & B00307589
+*
+* Acknowledgements: Code is based on Stuart Adams' individual coursework for Advanced Graphics but has been extended for this project
+*/
+
 namespace Engine
 {
 	namespace Content

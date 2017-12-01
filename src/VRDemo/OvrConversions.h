@@ -1,3 +1,8 @@
+/*
+* Names: Stuart Adams and Ben Tracy
+* Student IDs: B00265262 & B00307589
+*/
+
 #pragma once
 
 #include <OVR_Avatar.h>

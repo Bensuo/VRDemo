@@ -3,6 +3,11 @@
 #include "RigidBodyBox.hpp"
 #include "Model.h"
 
+/*
+* Names: Stuart Adams and Ben Tracy
+* Student IDs: B00265262 & B00307589
+*/
+
 namespace Engine {namespace Rendering {
 	class IRenderingEngine;
 }
