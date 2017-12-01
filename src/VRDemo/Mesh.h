@@ -5,6 +5,13 @@
 #include "IRenderingEngine.h"
 #include "IMesh.h"
 
+/*
+* Names: Stuart Adams and Ben Tracy
+* Student IDs: B00265262 & B00307589
+*
+* Acknowledgements: Code is from Stuart Adams' individual coursework for Advanced Graphics
+*/
+
 namespace Engine
 {
     namespace Rendering
@@ -24,10 +31,10 @@ namespace Engine
             const std::vector<GLuint>& GetIndices() const override;
             const Material& GetMaterial() const override;
             void Draw(const IRenderingEngine& rendering_engine) override;
-			std::vector<Vertex>& GetVertices()
-			{
-				return vertices;
-			}
+            std::vector<Vertex>& GetVertices()
+            {
+                return vertices;
+            }
         private:
             GLuint vao, vbo, ebo;
             std::vector<Vertex> vertices;
