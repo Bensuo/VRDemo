@@ -117,7 +117,7 @@ void VRDemoGame::RenderScene(const Rendering::Shader& shader)
     rendering_engine.End();
 }
 
-void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
+void VRDemoGame::RenderScene(const Rendering::Shader& shader, const int eye)
 {
     point_light.Position = player.GetPlayerTransform()->GetPosition();
     flash_light.Position = player.GetLeftHandPosWorldspace();
@@ -150,7 +150,7 @@ void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
     rendering_engine.End();
 }
 
-void VRDemoGame::RenderSkybox(const Rendering::Shader& shader, int eye)
+void VRDemoGame::RenderSkybox(const Rendering::Shader& shader, const int eye)
 {
     rendering_engine.Begin(
         player.GetEyeViewWorldSpace(eye), 
@@ -165,15 +165,18 @@ void VRDemoGame::RenderSkybox(const Rendering::Shader& shader, int eye)
 
 void VRDemoGame::Render()
 {
-    auto hand_left_pos = player.GetLeftHandPosWorldspace();
-    auto hand_left_dir = player.GetLeftHandDirWorldspace();
+    const auto hand_left_pos = player.GetLeftHandPosWorldspace();
+    const auto hand_left_dir = player.GetLeftHandDirWorldspace();
 
+    // start a depth pass for the shadow mapping
     rendering_engine.BeginDepthPass(hand_left_pos, hand_left_dir, 1.0f, 30.0f, 55.0f);
     RenderScene(rendering_engine.DepthShader());
     rendering_engine.EndDepthPass();
 
+    // render scene from vr perspective
     rendering_engine.ClearScreen();
 	rendering_engine.BeginRender();
+    // loop over eye indexes
 	for (int i = 0; i < 2; ++i)
 	{
 		rendering_engine.ClearEyeBuffer(i);
@@ -193,16 +196,16 @@ void VRDemoGame::SetUpLighting()
     point_light.Ambient = glm::vec3(0.0333, 0.0333, 0.0333);
     point_light.Diffuse = glm::vec3(1.0, 0.65, 0.45);
     point_light.Specular = glm::vec3(1.0, 1.0, 1.0);
-    point_light.Constant = 1.0;
-    point_light.Linear = 0.7;
-    point_light.Quadratic = 1.8;
+    point_light.Constant = 1.0f;
+    point_light.Linear = 0.7f;
+    point_light.Quadratic = 1.8f;
 
     flash_light.Ambient = glm::vec3(0.0, 0.0, 0.0);
     flash_light.Diffuse = glm::vec3(1.0, 1.0, 1.0);
     flash_light.Specular = glm::vec3(1.0, 1.0, 1.0);
-    flash_light.Constant = 1.0;
-    flash_light.Linear = 0.2;
-    flash_light.Quadratic = 0.032;
+    flash_light.Constant = 1.0f;
+    flash_light.Linear = 0.2f;
+    flash_light.Quadratic = 0.032f;
     flash_light.CutOff = glm::cos(glm::radians(15.0f));
     flash_light.OuterCutOff = glm::cos(glm::radians(25.0f));
     flash_light.Position = player.GetLeftHandPosWorldspace();
@@ -218,10 +221,10 @@ void VRDemoGame::SetUpLighting()
     spot_light.Diffuse = glm::vec3(1.0, 1.0, 0.5);
     spot_light.Specular = glm::vec3(1.0, 1.0, 1.0);
     spot_light.Constant = 1.0;
-    spot_light.Linear = 0.09;
-    spot_light.Quadratic = 0.032;
-    spot_light.CutOff = glm::cos(glm::radians(32.0));
-    spot_light.OuterCutOff = glm::cos(glm::radians(84.0));
+    spot_light.Linear = 0.09f;
+    spot_light.Quadratic = 0.032f;
+    spot_light.CutOff = glm::cos(glm::radians(32.0f));
+    spot_light.OuterCutOff = glm::cos(glm::radians(84.0f));
     spot_light.Position = glm::vec3(-2.5, 4.0, -2.0);
     spot_light.Direction = glm::vec3(0.0, -1.0, 0.0);
 
@@ -230,10 +233,10 @@ void VRDemoGame::SetUpLighting()
     spot_light2.Diffuse = glm::vec3(1.0, 1.0, 0.5);
     spot_light2.Specular = glm::vec3(1.0, 1.0, 1.0);
     spot_light2.Constant = 1.0;
-    spot_light2.Linear = 0.09;
-    spot_light2.Quadratic = 0.032;
-    spot_light2.CutOff = glm::cos(glm::radians(32.0));
-    spot_light2.OuterCutOff = glm::cos(glm::radians(84.0));
+    spot_light2.Linear = 0.09f;
+    spot_light2.Quadratic = 0.032f;
+    spot_light2.CutOff = glm::cos(glm::radians(32.0f));
+    spot_light2.OuterCutOff = glm::cos(glm::radians(84.0f));
     spot_light2.Position = glm::vec3(1.0, 4.0, -2.0);
     spot_light2.Direction = glm::vec3(0.0, -1.0, 0.0);
 
