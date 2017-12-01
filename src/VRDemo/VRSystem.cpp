@@ -195,11 +195,33 @@ void VRSystem::UpdateAvatar(const float delta_time)
 
 VRInputState VRSystem::GetInputState() const
 {
-    VRControllerState left, right;
-
-    ovrTrackingState trackState = ovr_GetTrackingState(session, 0, ovrTrue);
     ovrInputState inputState;
     ovr_GetInputState(session, ovrControllerType_Touch, &inputState);
+
+    std::unordered_map<Button, bool> left_buttons;
+    std::unordered_map<Button, bool> right_buttons;
+
+    if (inputState.Buttons & ovrButton_Y)
+    {
+        left_buttons.emplace(Button_Y, true);
+    }
+    if (inputState.Buttons & ovrButton_X)
+    {
+        left_buttons.emplace(Button_X, true);
+    }
+
+    if (inputState.Buttons & ovrButton_A)
+    {
+        right_buttons.emplace(Button_A, true);
+    }
+    if (inputState.Buttons & ovrButton_B)
+    {
+        right_buttons.emplace(Button_B, true);
+    }
+
+    VRControllerState left(left_buttons), right(right_buttons);
+
+    ovrTrackingState trackState = ovr_GetTrackingState(session, 0, ovrTrue);
 
     auto pos_left = trackState.HandPoses[ovrHand_Left].ThePose.Position;
     left.Transform.SetPosition(_glmFromOvrVector(pos_left));

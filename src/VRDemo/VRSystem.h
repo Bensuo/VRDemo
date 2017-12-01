@@ -7,11 +7,44 @@
 #include "Transform3D.hpp"
 #include "Avatar.h"
 #include "glm/vec3.hpp"
+#include <unordered_map>
+
+enum Button
+{
+    Button_A,
+    Button_B,
+    Button_X,
+    Button_Y
+};
 
 struct VRControllerState
 {
     Transform3D Transform;
     glm::vec2 ThumbstickAxis;
+    std::unordered_map<Button, bool> buttons;
+public:
+    VRControllerState() {}
+
+    explicit VRControllerState(const std::unordered_map<Button, bool>& buttons)
+        : buttons(buttons)
+    {}
+
+    bool IsButtonUp(const Button button) const
+    {
+        const auto& it = buttons.find(button);
+
+        if (it != buttons.end())
+        {
+            return it->second;
+        }
+
+        return false;
+    }
+
+    bool IsButtonDown(const Button button) const
+    {
+        return !IsButtonUp(button);
+    }
 };
 
 class VRInputState
@@ -21,7 +54,7 @@ private:
     VRControllerState m_right;
 public:
     VRInputState() {}
-    VRInputState(const VRControllerState left, const VRControllerState right)
+    VRInputState(const VRControllerState& left, const VRControllerState& right)
     : m_left(left), m_right(right) {}
 
     const VRControllerState& GetLeft() const { return m_left; }

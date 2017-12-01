@@ -10,6 +10,7 @@ void VRDemoGame::HandleInput()
 {
     const auto& keyboard_state = Input::Keyboard::GetState();
     const auto& mouse_state = Input::Mouse::GetState();
+    const auto& input_state = vr_system->GetInputState();
 
     if (keyboard_state.IsKeyDown(Key_Escape))
     {
@@ -45,7 +46,7 @@ void VRDemoGame::HandleInput()
         lamps_active.Up();
     }
 
-    if (keyboard_state.IsKeyDown(Key_F))
+    if (input_state.GetLeft().IsButtonDown(Button_Y) && input_state.GetLeft().IsButtonDown(Button_X))
     {
         flash_light_active.Down();
     }
@@ -254,6 +255,7 @@ VRDemoGame::VRDemoGame()
     blinn_phong(true),
     lighting_active(true),
     show_normal_mapping(true),
+    flash_light_active(true),
     player(vr_system, glm::vec3(0, 5.0f, 0))
 {
 
