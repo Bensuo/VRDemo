@@ -5,6 +5,13 @@
 #include "IShader.h"
 #include "Material.h"
 
+/*
+* Names: Stuart Adams and Ben Tracy
+* Student IDs: B00265262 & B00307589
+*
+* Acknowledgements: Code is from Stuart Adams' individual coursework for Advanced Graphics
+*/
+
 namespace Engine
 {
     namespace Rendering
@@ -46,6 +53,8 @@ namespace Engine
 
             void SetMaterial(const Material* light) const;
             void SetBool(const std::string& uniform, bool boolean) const;
+
+            GLuint Program() override;
         };
     }
 }

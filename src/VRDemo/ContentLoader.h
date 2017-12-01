@@ -1,9 +1,18 @@
-#ifndef CONTENT_H
-#define CONTENT_H
+#ifndef CONTENT_LOADER_H
+#define CONTENT_LOADER_H
+
+/*
+* Names: Stuart Adams and Ben Tracy
+* Student IDs: B00265262 & B00307589
+*
+* Acknowledgements: Code is based on Stuart Adams' individual coursework for Advanced Graphics but has been extended for this project's new features
+*/
 
 #include "SkyboxFactory.h"
 #include "ModelFactory.h"
 #include "ShaderFactory.h"
+#include "TextureFactory.h"
+#include "CollisionMeshFactory.hpp"
 
 namespace Engine
 {
@@ -12,11 +21,14 @@ namespace Engine
         /**
          * \brief Simple content loader. Abstracts asset importing implementation.
          */
-        class Content
+        class ContentLoader
         {
             ShaderFactory shader_factory;
             SkyboxFactory skybox_factory;
-            ModelFactory model_factory;
+            ModelFactory model_factory{*this};
+			TextureFactory texture_factory;
+			CollisionMeshFactory collision_mesh_factory{*this};
+
         public:
             /**
              * \brief Load a new 3D model.
@@ -59,7 +71,16 @@ namespace Engine
             {
                 return shader_factory.Load(vertex, fragment, geometry);
             }
+
+			Rendering::Texture& LoadTexture(const std::string& path)
+            {
+				return texture_factory.Load(path);
+            }
+			CollisionMesh& LoadCollisionMesh(const std::string& path)
+            {
+				return collision_mesh_factory.Load(path);
+            }
         };
     }
 }
-#endif // CONTENT_H
+#endif // CONTENT_LOADER_H

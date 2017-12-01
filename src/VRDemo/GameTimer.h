@@ -3,6 +3,13 @@
 
 #include <chrono>
 
+/*
+* Names: Stuart Adams and Ben Tracy
+* Student IDs: B00265262 & B00307589
+*
+* Acknowledgements: Code is from Stuart Adams' individual coursework for Advanced Graphics
+*/
+
 namespace Engine
 {
     using GameTime = float;
@@ -19,7 +26,7 @@ namespace Engine
 
             unsigned frames = 0;
             unsigned frame_cap;
-            const unsigned max_framerate = 60;
+            const unsigned max_framerate = 90;
 
             std::chrono::duration<double> frame_counter;
             std::chrono::duration<double> delta_time;

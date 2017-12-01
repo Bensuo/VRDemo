@@ -3,11 +3,26 @@
 
 #include "Window.h"
 #include "GameTimer.h"
-#include "Content.h"
+#include "ContentLoader.h"
 #include "RenderingEngine.h"
 #include <OVR_CAPI_GL.h>
+#include "PhysicsEngine.hpp"
+
+/*
+* Names: Stuart Adams and Ben Tracy
+* Student IDs: B00265262 & B00307589
+*
+* Acknowledgements: Code is based on Stuart Adams' individual coursework for Advanced Graphics but has been extended for this project's new features
+*/
+
 namespace Engine
 {
+    enum ExitCode
+    {
+        Success = 0,
+        Error = 1
+    };
+
     /**
      * \brief Our base-game class. Abstracts the game loop, graphics device and windowing implementation details from subclasses.
      */
@@ -20,16 +35,18 @@ namespace Engine
          */
         void GameLoop();
     protected:
-        Content::Content content;
+        Content::ContentLoader content;
         Windowing::Window window;
-		VRSystem vr_system;
+        std::shared_ptr<VRSystem> vr_system;
         Rendering::RenderingEngine rendering_engine;
         Time::GameTimer game_timer;
-		
+        Physics::PhysicsEngine physics_engine;
+        ExitCode exit_code;
+
         /**
          * \brief Exit the main game loop
          */
-        void Quit();
+        void Quit(const ExitCode exit_code);
 
         /**
          * \brief Update the main event loop.

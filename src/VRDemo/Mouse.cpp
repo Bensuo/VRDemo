@@ -12,8 +12,8 @@ namespace Engine
         {
             MouseStateBuilder state_builder;
 
-            SDL_SetHintWithPriority(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1", SDL_HINT_OVERRIDE);
-            SDL_SetRelativeMouseMode(SDL_TRUE);
+            //SDL_SetHintWithPriority(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1", SDL_HINT_OVERRIDE);
+            //SDL_SetRelativeMouseMode(SDL_TRUE);
 
             SDL_Event event;
             SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);

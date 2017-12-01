@@ -1,8 +1,8 @@
 /*
-Name: Stuart D. Adams
-Student ID: B00265262
-I declare that the following code was produced by Stuart Adams for the GED module and that this is my own work.
-I am aware of the penalties incurred by submitting in full or in part work that is not our own and that was developed by third parties that are not appropriately acknowledged.
+* Names: Stuart Adams and Ben Tracy
+* Student IDs: B00265262 & B00307589
+*
+* Acknowledgements: Code is from Stuart Adams' Game Engine Design coursework
 */
 #pragma once
 #include "Player.h"
@@ -17,7 +17,7 @@ namespace Engine
 		virtual void Execute(std::unique_ptr<Player>& character) = 0;
 	};
 
-	class csMoveBackward : public Command
+	class MoveBackward : public Command
 	{
 	public:
 		void Execute(std::unique_ptr<Player>& character) override
@@ -26,7 +26,7 @@ namespace Engine
 		}
 	};
 
-	class csMoveForward : public Command
+	class MoveForward : public Command
 	{
 	public:
 		void Execute(std::unique_ptr<Player>& character) override
@@ -35,7 +35,7 @@ namespace Engine
 		}
 	};
 
-	class csMoveRight : public Command
+	class MoveRight : public Command
 	{
 	public:
 		void Execute(std::unique_ptr<Player>& character) override
@@ -44,7 +44,7 @@ namespace Engine
 		}
 	};
 
-	class csMoveLeft : public Command
+	class MoveLeft : public Command
 	{
 	public:
 		void Execute(std::unique_ptr<Player>& character) override
@@ -53,7 +53,7 @@ namespace Engine
 		}
 	};
 
-	class csMouseMove : public Command
+	class MouseMove : public Command
 	{
 		glm::vec2 mouseMotion;
 	public:

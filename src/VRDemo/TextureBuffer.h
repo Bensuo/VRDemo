@@ -2,6 +2,11 @@
 #include <OVR_CAPI_GL.h>
 #include <GL/glew.h>
 
+/*
+* Names: Stuart Adams and Ben Tracy
+* Student IDs: B00265262 & B00307589
+*/
+
 struct TextureBuffer
 {
 	ovrSession          Session;
@@ -99,8 +104,9 @@ struct TextureBuffer
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dbuffer, 0);
 
 		glViewport(0, 0, texSize.w, texSize.h);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glEnable(GL_FRAMEBUFFER_SRGB);
+        glDepthMask(GL_TRUE);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_FRAMEBUFFER_SRGB);
 	}
 
 	void UnsetRenderSurface()

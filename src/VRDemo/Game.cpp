@@ -5,7 +5,6 @@ namespace Engine
 {
     void Game::GameLoop()
     {
-        running = true;
         game_timer.Initialize();
         while (running)
         {
@@ -16,6 +15,7 @@ namespace Engine
             {
                 game_timer.Update();
                 Update(game_timer.DeltaTime());
+				
             }
 
             //render processed frame
@@ -33,6 +33,7 @@ namespace Engine
 
     void Game::Update(const GameTime delta_time)
     {
+		physics_engine.StepSimulation(delta_time);
         window.Update();
     }
 
@@ -41,21 +42,42 @@ namespace Engine
         window.SwapBuffer();
     }
 
-    void Game::Quit()
+    void Game::Quit(const ExitCode exit_code)
     {
-        std::cout << "Quitting BlinnPhongGame" << std::endl;
+        this->exit_code = exit_code;
+
+        switch (exit_code)
+        {
+            case Success: std::cout << "Exiting game." << std::endl;
+            case Error: std::cout << "Exiting game, error handled successfully." << std::endl;
+        } 
+        
         running = false;
     }
 
-	Game::Game()
-		: window(1280, 720, "VRDemo"),
-		rendering_engine(vr_system)
+    Game::Game()
+        : window(1280, 720, "VRDemo"),
+        rendering_engine(vr_system),
+        vr_system(std::make_shared<VRSystem>())
     {
+        vr_system->CreateSessionFail.Connect([&]() 
+        {
+            Quit(Error);
+        });
+
+        vr_system->InitialiseFail.Connect([&]()
+        {
+            Quit(Error);
+        });
+
         window.OnClose.Connect([&]()
         {
-            Quit();
+            Quit(Success);
         });
-		vr_system.Init();
+
+		vr_system->Init();
+		physics_engine.SetGravity(0, -10.0f, 0);
+		physics_engine.SetMaxSubsteps(10);
     }
 
     int Game::Run()
@@ -63,6 +85,6 @@ namespace Engine
         //start game & run game loop
         GameLoop();
 
-        return 0;
+        return exit_code;
     }
 }

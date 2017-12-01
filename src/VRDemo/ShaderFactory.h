@@ -5,6 +5,14 @@
 #include <fstream>
 #include <sstream>
 #include "Shader.h"
+#include <unordered_map>
+
+/*
+* Names: Stuart Adams and Ben Tracy
+* Student IDs: B00265262 & B00307589
+*
+* Acknowledgements: Code is from Stuart Adams' individual coursework for Advanced Graphics
+*/
 
 namespace Engine
 {
@@ -13,7 +21,7 @@ namespace Engine
         class ShaderFactory
         {
         public:
-            Rendering::Shader& Load(const std::string& vertex_path, const std::string& fragment_path, const std::string& geometry_path = "")
+            static Rendering::Shader& Load(const std::string& vertex_path, const std::string& fragment_path, const std::string& geometry_path = "")
             {
                 auto path = vertex_path + ", " + fragment_path;
 
@@ -137,7 +145,7 @@ namespace Engine
                 return resources[path];
             }
         private:
-            std::unordered_map<std::string, Rendering::Shader> resources;
+            static std::unordered_map<std::string, Rendering::Shader> resources;
         };
     }
 }
