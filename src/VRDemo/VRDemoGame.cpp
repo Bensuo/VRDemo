@@ -10,6 +10,7 @@ void VRDemoGame::HandleInput()
 {
     const auto& keyboard_state = Input::Keyboard::GetState();
     const auto& mouse_state = Input::Mouse::GetState();
+    const auto& input_state = vr_system->GetInputState();
 
     if (keyboard_state.IsKeyDown(Key_Escape))
     {
@@ -36,16 +37,7 @@ void VRDemoGame::HandleInput()
         player.MoveRight();
     }
 
-    if (keyboard_state.IsKeyDown(Key_Space))
-    {
-        lamps_active.Down();
-    }
-    else
-    {
-        lamps_active.Up();
-    }
-
-    if (keyboard_state.IsKeyDown(Key_F))
+    if (input_state.GetLeft().IsButtonDown(Button_Y) && input_state.GetLeft().IsButtonDown(Button_X))
     {
         flash_light_active.Down();
     }
@@ -79,6 +71,15 @@ void VRDemoGame::HandleInput()
     else
     {
         show_normal_mapping.Up();
+    }
+
+    if (keyboard_state.IsKeyDown(Key_4))
+    {
+        show_parallax_mapping.Down();
+    }
+    else
+    {
+        show_parallax_mapping.Up();
     }
 
     const auto& motion = mouse_state.RelativeMotion();
@@ -130,7 +131,7 @@ void VRDemoGame::RenderScene(const Rendering::Shader& shader, int eye)
     {
         shader.SetVec3("lightPos", player.GetLeftHandPosWorldspace());
         shader.SetBool("blinn_phong", blinn_phong);
-        shader.SetBool("lamps_active", lamps_active);
+        shader.SetBool("show_parallax_mapping", show_parallax_mapping);
         shader.SetBool("flash_light_active", flash_light_active);
         shader.SetBool("lighting_active", lighting_active);
         shader.SetBool("show_normal_mapping", show_normal_mapping);
@@ -250,10 +251,11 @@ VRDemoGame::VRDemoGame()
         "res/textures/front.bmp")),
     shadow_shader(content.LoadShader("res/shaders/parallax-blinn-2.vs", "res/shaders/parallax-blinn-2.fs")),
     skybox_shader(content.LoadShader("res/shaders/skybox.vs", "res/shaders/skybox.fs")),
-    lamps_active(true),
+    show_parallax_mapping(true),
     blinn_phong(true),
     lighting_active(true),
     show_normal_mapping(true),
+    flash_light_active(true),
     player(vr_system, glm::vec3(0, 5.0f, 0))
 {
 

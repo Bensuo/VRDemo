@@ -6,6 +6,5 @@ namespace Engine
     {
         for (GLuint i = 0; i < this->meshes.size(); i++)
             meshes[i].Draw(rendering_engine);
-
     }
 }

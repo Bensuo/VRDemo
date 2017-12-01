@@ -11,6 +11,14 @@
 #include <SDL.h>
 #include "ShaderFactory.h"
 
+/*
+* Names: Stuart Adams and Ben Tracy
+* Student IDs: B00265262 & B00307589
+*
+* Acknowledgements: Avatar code based on the “Mirror” demo developed by Oculus. This class is just a thin wrapper around their implementation.
+* https://developer.oculus.com/documentation/avatarsdk/latest/concepts/avatars-gsg-native-intro/#avatars-gsg-native
+*/
+
 Avatar::Avatar(ovrSession ovr)
     : m_ovr(ovr), m_avatar(nullptr)
 {

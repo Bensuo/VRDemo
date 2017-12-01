@@ -112,6 +112,7 @@ namespace Engine
         {
             current_shader.SetMat4("model", matrix_stack.top());
             current_shader.SetBool("normal_mapped", false);
+            current_shader.SetBool("parallax_mapped", false);
             // Bind appropriate textures
             GLuint diffuse_nr = 1;
             GLuint specular_nr = 1;
@@ -125,6 +126,11 @@ namespace Engine
                 if (name == "normalMap")
                 {
                     current_shader.SetBool("normal_mapped", true);
+                }
+
+                if (name == "depthMap")
+                {
+                    current_shader.SetBool("parallax_mapped", true);
                 }
 
                 glBindTexture(GL_TEXTURE_2D, mesh->GetTextures()[i].Id);
