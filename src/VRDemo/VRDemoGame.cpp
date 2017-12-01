@@ -384,8 +384,15 @@ void VRDemoGame::PhysicsCallback(btDynamicsWorld *world, btScalar timestep)
 
 VRDemoGame::~VRDemoGame()
 {
-	//for (int i = 0; i < game_objects.size(); ++i)
-	//{
-	//	delete game_objects[i];
-	//}
+
+	for (int i = 0; i < game_objects.size(); ++i)
+	{
+		physics_engine.RemoveRigidBody(*game_objects[i]->rigid_body);
+		delete game_objects[i];
+	}
+	physics_engine.RemoveRigidBody(*hand_left->rigid_body);
+	physics_engine.RemoveRigidBody(*hand_right->rigid_body);
+	delete hand_left;
+	delete hand_right;
+	physics_engine.RemoveRigidBody(*player.GetRigidBody());
 }

@@ -50,6 +50,11 @@ namespace Engine
 			rigid_body->m_rigid_body->setDamping(0.99f, 0.99f);
 
         }
+		~VRPlayer()
+        {
+			delete rigid_body;
+			delete transform;
+        }
 
 		RigidBody* GetRigidBody()
         {
